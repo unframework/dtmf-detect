@@ -50,8 +50,9 @@ class FreqRMS
     freqFilter.Q.value = 300 # seems small enough of a band for given range
     freqFilter.frequency.value = freq
 
-    rmsComputer = context.createScriptProcessor(1024, 1, 1)
-    rmsComputer.onaudioprocess = (e) =>
+    # saving ref on object to avoid garbage collection on mobile
+    @_rmsComputer = context.createScriptProcessor(1024, 1, 1)
+    @_rmsComputer.onaudioprocess = (e) =>
       channelData = e.inputBuffer.getChannelData(0)
 
       sum = 0
@@ -60,8 +61,8 @@ class FreqRMS
 
       @rmsValue = Math.sqrt(sum / channelData.length)
 
-    freqFilter.connect rmsComputer
-    rmsComputer.connect context.destination
+    freqFilter.connect @_rmsComputer
+    @_rmsComputer.connect context.destination
 
     @frequency = freq
     @audioNode = freqFilter
