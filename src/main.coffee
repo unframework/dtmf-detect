@@ -1,6 +1,6 @@
 vdomLive = require('vdom-live')
 
-FrequencyRMS = require('./FrequencyRMS')
+FrequencyRMS = require('./FrequencyRMS.coffee')
 
 createAudioContext = ->
   if typeof window.AudioContext isnt 'undefined'
