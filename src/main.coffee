@@ -57,6 +57,48 @@ runSample = (index) ->
 
   soundSource.connect context.destination
 
+renderSparkline = (sparkline, detector, h) ->
+  resolution = 10
+  graphUnitPx = 3
+  heightPx = (resolution + 1) * graphUnitPx
+  graphWidthPx = sparkline.length * graphUnitPx
+  textWidthPx = 60
+
+  h 'div', style: {
+    boxSizing: 'border-box'
+    position: 'relative'
+    display: 'inline-block'
+    paddingLeft: graphWidthPx + 'px'
+    width: (graphWidthPx + textWidthPx) + 'px'
+    height: heightPx + 'px'
+    background: '#f8f8f8'
+    textAlign: 'center'
+    lineHeight: heightPx + 'px'
+  }, [
+    h 'div', style: {
+      position: 'absolute'
+      left: 0
+      top: 0
+      width: graphWidthPx + 'px'
+      height: heightPx + 'px'
+      background: '#eee'
+    }
+    for v, i in sparkline
+      iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
+      h 'span', { style: {
+        boxSizing: 'border-box'
+        position: 'absolute'
+        left: i * graphUnitPx + 'px'
+        bottom: 0
+        width: graphUnitPx + 'px'
+        height: (iv + 1) * graphUnitPx + 'px'
+        background: '#666'
+        borderTop: '2px solid #444'
+        transition: 'height 0.1s'
+      } }, ''
+    detector.frequency + 'Hz'
+  ]
+
 vdomLive (renderLive) ->
   document.body.style.textAlign = 'center';
 
@@ -65,7 +107,7 @@ vdomLive (renderLive) ->
       for sparkline, j in sparklineSet
         detector = bankList[i][j]
         sparkline.shift()
-        sparkline.push(detector.rmsValue)
+        sparkline.push(4 * detector.rmsValue)
   , 100
 
   liveDOM = renderLive (h) ->
@@ -81,20 +123,7 @@ vdomLive (renderLive) ->
       for sparklineSet, setIndex in sparklineSetList
         lineNodes = for sparkline, sparklineIndex in sparklineSet
           detector = bankList[setIndex][sparklineIndex]
-          h 'div', [
-            '['
-            for v in sparkline
-              iv = Math.min(10, Math.round(40 * v))
-              h 'span', { style: {
-                display: 'inline-block'
-                width: '2px'
-                height: '2px'
-                background: '#444'
-                borderTop: (10 - iv) * 2 + 'px solid #eee'
-                borderBottom: iv * 2 + 'px solid #666'
-              } }, ''
-            '] ' + detector.frequency + 'Hz'
-          ]
+          renderSparkline sparkline, detector, h
 
         [ h('hr'), h 'div', 'Set ' + setIndex ].concat lineNodes
     ]
