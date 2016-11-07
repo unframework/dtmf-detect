@@ -107,7 +107,7 @@ vdomLive (renderLive) ->
     }, [
       for keyName, i in keyList
         do (i) ->
-          h 'button', { onclick: -> runSample i }, 'Key: ' + keyName
+          h 'button', { style: { fontSize: '120%' }, onclick: -> runSample i }, 'Key: ' + keyName
       for sparklineSet, setIndex in sparklineSetList
         lineNodes = for sparkline, sparklineIndex in sparklineSet
           detector = bankList[setIndex][sparklineIndex]
