@@ -66,6 +66,10 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477, 1633 ] ]
   for freq in freqSet
     new FreqRMS(context, freq)
 
+sparklineSetList = for bank in bankList
+  for detector in bank
+    0 for [ 0 ... 10 ]
+
 runSample = ->
   soundSource = context.createBufferSource()
   soundSource.buffer = soundBuffer
@@ -80,7 +84,13 @@ runSample = ->
 vdomLive (renderLive) ->
   document.body.style.textAlign = 'center';
 
-  setInterval (->), 200
+  setInterval ->
+    for sparklineSet, i in sparklineSetList
+      for sparkline, j in sparklineSet
+        detector = bankList[i][j]
+        sparkline.shift()
+        sparkline.push(detector.rmsValue)
+  , 100
 
   liveDOM = renderLive (h) ->
     h 'div', {
@@ -90,9 +100,24 @@ vdomLive (renderLive) ->
       }
     }, [
       h 'button', { onclick: runSample }, 'Hej!'
-      for bank in bankList
-        for detector in bank
-          h 'div', '[' + Math.round(100 * detector.rmsValue) + ']'
+      for sparklineSet, setIndex in sparklineSetList
+        lineNodes = for sparkline in sparklineSet
+          h 'div', [
+            '['
+            for v in sparkline
+              iv = Math.min(10, Math.round(40 * v))
+              h 'span', { style: {
+                display: 'inline-block'
+                width: '2px'
+                height: '1px'
+                background: '#444'
+                borderTop: (10 - iv) + 'px solid #eee'
+                borderBottom: iv + 'px solid #666'
+              } }, ''
+            ']'
+          ]
+
+        [ h('hr'), h 'div', 'Set ' + setIndex ].concat lineNodes
     ]
 
   document.body.appendChild liveDOM
