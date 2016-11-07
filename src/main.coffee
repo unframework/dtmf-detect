@@ -20,17 +20,11 @@ loadData = (url, cb) ->
   request.responseType = 'arraybuffer'
 
   request.onload = ->
-    done = false
-
     context.decodeAudioData request.response, (buffer) ->
-      done = true
       cb buffer
 
     # silly hack to make sure that screen refreshes on load
-    intervalId = setInterval (->
-      if done
-        clearInterval intervalId
-    ), 300
+    setTimeout (->), 0
 
   request.send();
 
