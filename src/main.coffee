@@ -32,8 +32,14 @@ loadData = (url, cb) ->
 
   request.send();
 
-loadData 'dtmf.mp3', (data) ->
-  soundBuffer = data
+keyList = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'Star', 'Pound' ]
+
+soundBufferList = for x, i in keyList
+  do (x, i) ->
+    loadData 'tones/dtmf' + x + '.mp3', (data) ->
+      soundBufferList[i] = data
+
+  null
 
 # http://dsp.stackexchange.com/questions/15594/how-can-i-reduce-noise-errors-when-detecting-dtmf-with-the-goertzel-algorithm
 class FreqRMS
@@ -69,9 +75,9 @@ sparklineSetList = for bank in bankList
   for detector in bank
     0 for [ 0 ... 10 ]
 
-runSample = ->
+runSample = (index) ->
   soundSource = context.createBufferSource()
-  soundSource.buffer = soundBuffer
+  soundSource.buffer = soundBufferList[index]
   soundSource.start 0
 
   for bank in bankList
@@ -98,7 +104,9 @@ vdomLive (renderLive) ->
         marginTop: '50px'
       }
     }, [
-      h 'button', { onclick: runSample }, 'Hej!'
+      for keyName, i in keyList
+        do (i) ->
+          h 'button', { onclick: -> runSample i }, 'Key: ' + keyName
       for sparklineSet, setIndex in sparklineSetList
         lineNodes = for sparkline, sparklineIndex in sparklineSet
           detector = bankList[setIndex][sparklineIndex]
