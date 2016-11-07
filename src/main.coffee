@@ -36,8 +36,6 @@ loadData 'dtmf.mp3', (data) ->
   soundBuffer = data
 
 # http://dsp.stackexchange.com/questions/15594/how-can-i-reduce-noise-errors-when-detecting-dtmf-with-the-goertzel-algorithm
-# [ 697, 770, 852, 941 ]
-# [ 1209, 1336, 1477, 1633 ]
 class FreqRMS
   constructor: (context, freq) ->
     freqFilter = context.createBiquadFilter()
@@ -59,6 +57,7 @@ class FreqRMS
     freqFilter.connect rmsComputer
     rmsComputer.connect context.destination
 
+    @frequency = freq
     @audioNode = freqFilter
     @rmsValue = 0
 
@@ -101,7 +100,8 @@ vdomLive (renderLive) ->
     }, [
       h 'button', { onclick: runSample }, 'Hej!'
       for sparklineSet, setIndex in sparklineSetList
-        lineNodes = for sparkline in sparklineSet
+        lineNodes = for sparkline, sparklineIndex in sparklineSet
+          detector = bankList[setIndex][sparklineIndex]
           h 'div', [
             '['
             for v in sparkline
@@ -109,12 +109,12 @@ vdomLive (renderLive) ->
               h 'span', { style: {
                 display: 'inline-block'
                 width: '2px'
-                height: '1px'
+                height: '2px'
                 background: '#444'
-                borderTop: (10 - iv) + 'px solid #eee'
-                borderBottom: iv + 'px solid #666'
+                borderTop: (10 - iv) * 2 + 'px solid #eee'
+                borderBottom: iv * 2 + 'px solid #666'
               } }, ''
-            ']'
+            '] ' + detector.frequency + 'Hz'
           ]
 
         [ h('hr'), h 'div', 'Set ' + setIndex ].concat lineNodes
