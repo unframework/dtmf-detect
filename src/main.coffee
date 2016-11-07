@@ -62,7 +62,7 @@ class FreqRMS
     @audioNode = freqFilter
     @rmsValue = 0
 
-bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477, 1633 ] ]
+bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FreqRMS(context, freq)
 
