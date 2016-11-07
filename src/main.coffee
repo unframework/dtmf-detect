@@ -35,35 +35,64 @@ loadData = (url, cb) ->
 loadData 'dtmf.mp3', (data) ->
   soundBuffer = data
 
-analyser = context.createAnalyser()
-analyser.fftSize = 512
+# http://dsp.stackexchange.com/questions/15594/how-can-i-reduce-noise-errors-when-detecting-dtmf-with-the-goertzel-algorithm
+# [ 697, 770, 852, 941 ]
+# [ 1209, 1336, 1477, 1633 ]
+class FreqRMS
+  constructor: (context, freq) ->
+    freqFilter = context.createBiquadFilter()
+    freqFilter.channelCount = 1
+    freqFilter.type = 'bandpass'
+    freqFilter.Q.value = 300 # seems small enough of a band for given range
+    freqFilter.frequency.value = freq
+
+    rmsComputer = context.createScriptProcessor(1024, 1, 1)
+    rmsComputer.onaudioprocess = (e) =>
+      channelData = e.inputBuffer.getChannelData(0)
+
+      sum = 0
+      for x in channelData
+        sum += x * x
+
+      @rmsValue = Math.sqrt(sum / channelData.length)
+
+    freqFilter.connect rmsComputer
+    rmsComputer.connect context.destination
+
+    @audioNode = freqFilter
+    @rmsValue = 0
+
+bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477, 1633 ] ]
+  for freq in freqSet
+    new FreqRMS(context, freq)
 
 runSample = ->
   soundSource = context.createBufferSource()
   soundSource.buffer = soundBuffer
   soundSource.start 0
-  soundSource.connect analyser
+
+  for bank in bankList
+    for detector in bank
+      soundSource.connect detector.audioNode
+
   soundSource.connect context.destination
 
 vdomLive (renderLive) ->
-  frequencyData = new Uint8Array analyser.frequencyBinCount
-
-  setInterval ->
-    analyser.getByteFrequencyData frequencyData
-  , 100
-
   document.body.style.textAlign = 'center';
+
+  setInterval (->), 200
+
   liveDOM = renderLive (h) ->
     h 'div', {
       style: {
         display: 'inline-block'
-        position: 'relative'
         marginTop: '50px'
-        width: analyser.frequencyBinCount * 1 + 'px'
-        height: 255 + 'px'
       }
-    }, ((h 'var', style: { position: 'absolute', display: 'block', background: 'black', width: '1px', height: '1px', bottom: x + 'px', left: i * 1 + 'px' }) for x, i in frequencyData).concat [
+    }, [
       h 'button', { onclick: runSample }, 'Hej!'
+      for bank in bankList
+        for detector in bank
+          h 'div', '[' + Math.round(100 * detector.rmsValue) + ']'
     ]
 
   document.body.appendChild liveDOM
