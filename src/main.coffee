@@ -99,6 +99,38 @@ renderSparkline = (sparkline, detector, h) ->
     detector.frequency + 'Hz'
   ]
 
+renderBank = (bankIndex, nodeList, h) ->
+  widthPx = 100
+  nodeHeightPx = 40
+  captionHeightPx = 20
+
+  h 'div', style: {
+    position: 'relative'
+    display: 'inline-block'
+    width: widthPx + 'px'
+    height: (captionHeightPx + nodeList.length * nodeHeightPx) + 'px'
+  }, [
+    h 'div', style: {
+      position: 'absolute'
+      left: 0
+      right: 0
+      top: 0
+      height: captionHeightPx + 'px'
+      lineHeight: captionHeightPx + 'px'
+      textAlign: 'center'
+    }, 'Set ' + bankIndex
+    for lineNode, i in nodeList
+      h 'div', style: {
+        position: 'absolute'
+        left: 0
+        right: 0
+        top: (captionHeightPx + i * nodeHeightPx) + 'px'
+        height: nodeHeightPx + 'px'
+        lineHeight: nodeHeightPx + 'px'
+        textAlign: 'center'
+      }, lineNode
+  ]
+
 vdomLive (renderLive) ->
   document.body.style.textAlign = 'center';
 
@@ -111,21 +143,19 @@ vdomLive (renderLive) ->
   , 100
 
   liveDOM = renderLive (h) ->
-    h 'div', {
-      style: {
-        display: 'inline-block'
-        marginTop: '50px'
-      }
+    h 'div', style: {
+      display: 'inline-block'
+      marginTop: '50px'
     }, [
       for keyName, i in keyList
         do (i) ->
-          h 'button', { style: { fontSize: '120%' }, onclick: -> runSample i }, 'Key: ' + keyName
+          h 'button', style: { fontSize: '120%' }, onclick: (-> runSample i), 'Key: ' + keyName
       for sparklineSet, setIndex in sparklineSetList
         lineNodes = for sparkline, sparklineIndex in sparklineSet
           detector = bankList[setIndex][sparklineIndex]
           renderSparkline sparkline, detector, h
 
-        [ h('hr'), h 'div', 'Set ' + setIndex ].concat lineNodes
+        renderBank setIndex, lineNodes, h
     ]
 
   document.body.appendChild liveDOM
