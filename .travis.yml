@@ -1,0 +1,24 @@
+sudo: false
+branches:
+  only:
+    - master
+
+language: node_js
+
+after_success:
+  - git config user.name 'TravisCI Auto-publisher'
+  - git config user.email 'travis-auto-publish@example.com'
+  - if [ "$TRAVIS_PULL_REQUEST" = false ]; then
+      printf '#!/bin/sh -e\necho %s' "$GH_PUBLISH_TOKEN" > gh-publish-pass.sh && chmod u+x gh-publish-pass.sh &&
+      (
+        [ -f index.html ] || echo '<script src="index.js"></script>' > index.html
+      ) &&
+      (
+        node_modules/.bin/browserify index.js > index-browserify.js &&
+        mv index-browserify.js index.js
+      ) &&
+      git add index.js index.html &&
+      git commit -m 'Auto-publishing via TravisCI [skip ci]' &&
+      GIT_ASKPASS=./gh-publish-pass.sh git push origin +HEAD:refs/heads/gh-pages
+      ;
+    fi
