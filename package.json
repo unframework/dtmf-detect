@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "brfs": "^1.4.3",
+    "browserify": "^13.1.1",
     "coffeeify": "^2.0.1",
     "vdom-live": "^1.1.4"
   }
