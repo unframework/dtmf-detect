@@ -9,3 +9,12 @@ Using WebAudio to detect DTMF codes (touch-tone phone keys). Live demo here: htt
 - https://github.com/mmckegg/audio-rms
 - https://github.com/antoinet/webaudio/blob/master/dtmf-demod.html (original FFT approach which did not pan out)
 - http://jetcityorange.com/dtmf/
+
+
+Concept hierarchy for affordances (which might be more like traits - any state object has-a affordance):
+
+- Affordance
+    - ScreenAffordance
+    - LineAffordance (CLI)
+
+Affordances are pretty much like r/o JSON stuff read during render time? However, actual render layer still needs its own state (just listen to upstream stuff and keep own stuff too)
