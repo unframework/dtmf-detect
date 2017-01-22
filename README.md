@@ -6,6 +6,8 @@ Using WebAudio to detect DTMF codes (touch-tone phone keys). Live demo here: htt
 
 Sparkline component maintains its own timeline data. This is because time-resolution/etc are actually rendering concerns, the model object being rendered is the "time series" as a contained whole.
 
+Detector/button trackers are on the outside, but feed tracker components to layout children that then convey target coords back up.
+
 ## References
 
 - https://en.wikipedia.org/wiki/Dual-tone_multi-frequency_signaling
