@@ -121,16 +121,17 @@ class Sparkline extends React.PureComponent
       @_detectorRMSNode.frequency + 'Hz'
     ]
 
-renderBank = (bankIndex, nodeList, h) ->
+Bank = ({ label, bank }) ->
+  h = React.createElement
   widthPx = 100
   nodeHeightPx = 40
   captionHeightPx = 20
 
-  h 'div', key: bankIndex, style: {
+  h 'div', style: {
     position: 'relative'
     display: 'inline-block'
     width: widthPx + 'px'
-    height: (captionHeightPx + nodeList.length * nodeHeightPx) + 'px'
+    height: (captionHeightPx + bank.length * nodeHeightPx) + 'px'
   }, [
     h 'div', key: -1, style: {
       position: 'absolute'
@@ -140,8 +141,8 @@ renderBank = (bankIndex, nodeList, h) ->
       height: captionHeightPx + 'px'
       lineHeight: captionHeightPx + 'px'
       textAlign: 'center'
-    }, 'Set ' + bankIndex
-    for lineNode, i in nodeList
+    }, label
+    for detector, i in bank
       h 'div', key: i, style: {
         position: 'absolute'
         left: 0
@@ -150,7 +151,7 @@ renderBank = (bankIndex, nodeList, h) ->
         height: nodeHeightPx + 'px'
         lineHeight: nodeHeightPx + 'px'
         textAlign: 'center'
-      }, lineNode
+      }, h Sparkline, { detectorRMSNode: detector }
   ]
 
 document.addEventListener 'DOMContentLoaded', ->
@@ -167,10 +168,7 @@ document.addEventListener 'DOMContentLoaded', ->
         do (i) ->
           h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
       for bank, bankIndex in bankList
-        lineNodes = for detector in bank
-          h Sparkline, { detectorRMSNode: detector }
-
-        renderBank bankIndex, lineNodes, h
+        h Bank, label: 'Set ' + bankIndex, bank: bank
     ]
 
   root = document.createElement('div')
