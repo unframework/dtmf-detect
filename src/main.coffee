@@ -1,4 +1,5 @@
-vdomLive = require('vdom-live')
+React = require('react')
+ReactDOM = require('react-dom')
 
 FrequencyRMS = require('./FrequencyRMS.coffee')
 
@@ -42,10 +43,6 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FrequencyRMS(context, freq)
 
-sparklineSetList = for bank in bankList
-  for detector in bank
-    0 for [ 0 ... 10 ]
-
 runSample = (index) ->
   soundSource = context.createBufferSource()
   soundSource.buffer = soundBufferList[index]
@@ -57,49 +54,75 @@ runSample = (index) ->
 
   soundSource.connect context.destination
 
-renderSparkline = (sparkline, detector, h) ->
-  resolution = 10
-  graphUnitPx = 3
-  heightPx = (resolution + 1) * graphUnitPx
-  graphWidthPx = sparkline.length * graphUnitPx
-  textWidthPx = 60
+class Sparkline extends React.PureComponent
+  constructor: (props) ->
+    super()
 
-  h 'div', style: {
-    boxSizing: 'border-box'
-    position: 'relative'
-    display: 'inline-block'
-    paddingLeft: graphWidthPx + 'px'
-    width: (graphWidthPx + textWidthPx) + 'px'
-    height: heightPx + 'px'
-    background: '#f8f8f8'
-    textAlign: 'center'
-    lineHeight: heightPx + 'px'
-  }, [
+    @_detectorRMSNode = props.detectorRMSNode
+    @_series = (0 for [ 0 ... 10 ])
+    @_unmounted = false
+
+  _processFrame: ->
+    @_series.shift()
+    @_series.push(4 * @_detectorRMSNode.rmsValue)
+
+  componentDidMount: ->
+    intervalId = setInterval =>
+      if @_unmounted
+        clearInterval intervalId
+      else
+        @_processFrame()
+        @forceUpdate()
+    , 100
+
+  componentWillUnmount: ->
+    @_unmounted = true
+
+  render: ->
+    h = React.createElement
+    resolution = 10
+    graphUnitPx = 3
+    heightPx = (resolution + 1) * graphUnitPx
+    graphWidthPx = @_series.length * graphUnitPx
+    textWidthPx = 60
+
     h 'div', style: {
-      position: 'absolute'
-      left: 0
-      top: 0
-      width: graphWidthPx + 'px'
+      boxSizing: 'border-box'
+      position: 'relative'
+      display: 'inline-block'
+      paddingLeft: graphWidthPx + 'px'
+      width: (graphWidthPx + textWidthPx) + 'px'
       height: heightPx + 'px'
-      background: '#eee'
-    }
-    for v, i in sparkline
-      iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
-      h 'span', { style: {
-        boxSizing: 'border-box'
+      background: '#f8f8f8'
+      textAlign: 'center'
+      lineHeight: heightPx + 'px'
+    }, [
+      h 'div', key: -1, style: {
         position: 'absolute'
-        left: i * graphUnitPx + 'px'
-        bottom: 0
-        width: graphUnitPx + 'px'
-        height: (iv + 1) * graphUnitPx + 'px'
-        background: '#666'
-        borderTop: '2px solid #444'
-        transition: 'height 0.1s'
-      } }, ''
-    detector.frequency + 'Hz'
-  ]
+        left: 0
+        top: 0
+        width: graphWidthPx + 'px'
+        height: heightPx + 'px'
+        background: '#eee'
+      }
+      for v, i in @_series
+        iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
+        h 'span', { key: i, style: {
+          boxSizing: 'border-box'
+          position: 'absolute'
+          left: i * graphUnitPx + 'px'
+          bottom: 0
+          width: graphUnitPx + 'px'
+          height: (iv + 1) * graphUnitPx + 'px'
+          background: '#666'
+          borderTop: '2px solid #444'
+          transition: 'height 0.1s'
+        } }, ''
+      @_detectorRMSNode.frequency + 'Hz'
+    ]
 
-renderBank = (bankIndex, nodeList, h) ->
+Bank = ({ label, bank }) ->
+  h = React.createElement
   widthPx = 100
   nodeHeightPx = 40
   captionHeightPx = 20
@@ -108,9 +131,9 @@ renderBank = (bankIndex, nodeList, h) ->
     position: 'relative'
     display: 'inline-block'
     width: widthPx + 'px'
-    height: (captionHeightPx + nodeList.length * nodeHeightPx) + 'px'
+    height: (captionHeightPx + bank.length * nodeHeightPx) + 'px'
   }, [
-    h 'div', style: {
+    h 'div', key: -1, style: {
       position: 'absolute'
       left: 0
       right: 0
@@ -118,9 +141,9 @@ renderBank = (bankIndex, nodeList, h) ->
       height: captionHeightPx + 'px'
       lineHeight: captionHeightPx + 'px'
       textAlign: 'center'
-    }, 'Set ' + bankIndex
-    for lineNode, i in nodeList
-      h 'div', style: {
+    }, label
+    for detector, i in bank
+      h 'div', key: i, style: {
         position: 'absolute'
         left: 0
         right: 0
@@ -128,34 +151,27 @@ renderBank = (bankIndex, nodeList, h) ->
         height: nodeHeightPx + 'px'
         lineHeight: nodeHeightPx + 'px'
         textAlign: 'center'
-      }, lineNode
+      }, h Sparkline, { detectorRMSNode: detector }
   ]
 
-vdomLive (renderLive) ->
+document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
-  setInterval ->
-    for sparklineSet, i in sparklineSetList
-      for sparkline, j in sparklineSet
-        detector = bankList[i][j]
-        sparkline.shift()
-        sparkline.push(4 * detector.rmsValue)
-  , 100
+  h = React.createElement
 
-  liveDOM = renderLive (h) ->
+  Demo = () ->
     h 'div', style: {
       display: 'inline-block'
       marginTop: '50px'
     }, [
       for keyName, i in keyList
         do (i) ->
-          h 'button', style: { fontSize: '120%' }, onclick: (-> runSample i), 'Key: ' + keyName
-      for sparklineSet, setIndex in sparklineSetList
-        lineNodes = for sparkline, sparklineIndex in sparklineSet
-          detector = bankList[setIndex][sparklineIndex]
-          renderSparkline sparkline, detector, h
-
-        renderBank setIndex, lineNodes, h
+          h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
+      for bank, bankIndex in bankList
+        h Bank, label: 'Set ' + bankIndex, bank: bank
     ]
 
-  document.body.appendChild liveDOM
+  root = document.createElement('div')
+  document.body.appendChild(root)
+
+  ReactDOM.render(React.createElement(Demo), root)
