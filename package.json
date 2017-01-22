@@ -6,6 +6,21 @@
   "browserify": {
     "transform": [
       "coffeeify",
+      [
+        "babelify",
+        {
+          "presets": [
+            "react"
+          ],
+          "env": {
+            "production": {
+              "presets": [
+                "es2015"
+              ]
+            }
+          }
+        }
+      ],
       "brfs"
     ]
   },
@@ -15,6 +30,9 @@
   "author": "Nick Matantsev <nick.matantsev@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babelify": "^7.3.0",
     "brfs": "^1.4.3",
     "browserify": "^13.1.1",
     "coffeeify": "^2.0.1",
