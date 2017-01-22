@@ -43,10 +43,6 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FrequencyRMS(context, freq)
 
-sparklineSetList = for bank in bankList
-  for detector in bank
-    0 for [ 0 ... 10 ]
-
 runSample = (index) ->
   soundSource = context.createBufferSource()
   soundSource.buffer = soundBufferList[index]
@@ -58,47 +54,72 @@ runSample = (index) ->
 
   soundSource.connect context.destination
 
-renderSparkline = (index, sparkline, detector, h) ->
-  resolution = 10
-  graphUnitPx = 3
-  heightPx = (resolution + 1) * graphUnitPx
-  graphWidthPx = sparkline.length * graphUnitPx
-  textWidthPx = 60
+class Sparkline extends React.PureComponent
+  constructor: (props) ->
+    super()
 
-  h 'div', key: index, style: {
-    boxSizing: 'border-box'
-    position: 'relative'
-    display: 'inline-block'
-    paddingLeft: graphWidthPx + 'px'
-    width: (graphWidthPx + textWidthPx) + 'px'
-    height: heightPx + 'px'
-    background: '#f8f8f8'
-    textAlign: 'center'
-    lineHeight: heightPx + 'px'
-  }, [
-    h 'div', key: -1, style: {
-      position: 'absolute'
-      left: 0
-      top: 0
-      width: graphWidthPx + 'px'
+    @_detectorRMSNode = props.detectorRMSNode
+    @_series = (0 for [ 0 ... 10 ])
+    @_unmounted = false
+
+  _processFrame: ->
+    @_series.shift()
+    @_series.push(4 * @_detectorRMSNode.rmsValue)
+
+  componentDidMount: ->
+    intervalId = setInterval =>
+      if @_unmounted
+        clearInterval intervalId
+      else
+        @_processFrame()
+        @forceUpdate()
+    , 100
+
+  componentWillUnmount: ->
+    @_unmounted = true
+
+  render: ->
+    h = React.createElement
+    resolution = 10
+    graphUnitPx = 3
+    heightPx = (resolution + 1) * graphUnitPx
+    graphWidthPx = @_series.length * graphUnitPx
+    textWidthPx = 60
+
+    h 'div', style: {
+      boxSizing: 'border-box'
+      position: 'relative'
+      display: 'inline-block'
+      paddingLeft: graphWidthPx + 'px'
+      width: (graphWidthPx + textWidthPx) + 'px'
       height: heightPx + 'px'
-      background: '#eee'
-    }
-    for v, i in sparkline
-      iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
-      h 'span', { key: i, style: {
-        boxSizing: 'border-box'
+      background: '#f8f8f8'
+      textAlign: 'center'
+      lineHeight: heightPx + 'px'
+    }, [
+      h 'div', key: -1, style: {
         position: 'absolute'
-        left: i * graphUnitPx + 'px'
-        bottom: 0
-        width: graphUnitPx + 'px'
-        height: (iv + 1) * graphUnitPx + 'px'
-        background: '#666'
-        borderTop: '2px solid #444'
-        transition: 'height 0.1s'
-      } }, ''
-    detector.frequency + 'Hz'
-  ]
+        left: 0
+        top: 0
+        width: graphWidthPx + 'px'
+        height: heightPx + 'px'
+        background: '#eee'
+      }
+      for v, i in @_series
+        iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
+        h 'span', { key: i, style: {
+          boxSizing: 'border-box'
+          position: 'absolute'
+          left: i * graphUnitPx + 'px'
+          bottom: 0
+          width: graphUnitPx + 'px'
+          height: (iv + 1) * graphUnitPx + 'px'
+          background: '#666'
+          borderTop: '2px solid #444'
+          transition: 'height 0.1s'
+        } }, ''
+      @_detectorRMSNode.frequency + 'Hz'
+    ]
 
 renderBank = (bankIndex, nodeList, h) ->
   widthPx = 100
@@ -135,16 +156,6 @@ renderBank = (bankIndex, nodeList, h) ->
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
-  setInterval ->
-    for sparklineSet, i in sparklineSetList
-      for sparkline, j in sparklineSet
-        detector = bankList[i][j]
-        sparkline.shift()
-        sparkline.push(4 * detector.rmsValue)
-
-    ReactDOM.render(React.createElement(Demo), root)
-  , 100
-
   h = React.createElement
 
   Demo = () ->
@@ -155,12 +166,11 @@ document.addEventListener 'DOMContentLoaded', ->
       for keyName, i in keyList
         do (i) ->
           h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
-      for sparklineSet, setIndex in sparklineSetList
-        lineNodes = for sparkline, sparklineIndex in sparklineSet
-          detector = bankList[setIndex][sparklineIndex]
-          renderSparkline sparklineIndex, sparkline, detector, h
+      for bank, bankIndex in bankList
+        lineNodes = for detector in bank
+          h Sparkline, { detectorRMSNode: detector }
 
-        renderBank setIndex, lineNodes, h
+        renderBank bankIndex, lineNodes, h
     ]
 
   root = document.createElement('div')

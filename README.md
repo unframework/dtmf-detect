@@ -2,6 +2,10 @@
 
 Using WebAudio to detect DTMF codes (touch-tone phone keys). Live demo here: https://unframework.github.io/dtmf-detect/
 
+## React Usage Notes
+
+Sparkline component maintains its own timeline data. This is because time-resolution/etc are actually rendering concerns, the model object being rendered is the "time series" as a contained whole.
+
 ## References
 
 - https://en.wikipedia.org/wiki/Dual-tone_multi-frequency_signaling
