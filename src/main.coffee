@@ -1,4 +1,5 @@
-vdomLive = require('vdom-live')
+React = require('react')
+ReactDOM = require('react-dom')
 
 FrequencyRMS = require('./FrequencyRMS.coffee')
 
@@ -57,14 +58,14 @@ runSample = (index) ->
 
   soundSource.connect context.destination
 
-renderSparkline = (sparkline, detector, h) ->
+renderSparkline = (index, sparkline, detector, h) ->
   resolution = 10
   graphUnitPx = 3
   heightPx = (resolution + 1) * graphUnitPx
   graphWidthPx = sparkline.length * graphUnitPx
   textWidthPx = 60
 
-  h 'div', style: {
+  h 'div', key: index, style: {
     boxSizing: 'border-box'
     position: 'relative'
     display: 'inline-block'
@@ -75,7 +76,7 @@ renderSparkline = (sparkline, detector, h) ->
     textAlign: 'center'
     lineHeight: heightPx + 'px'
   }, [
-    h 'div', style: {
+    h 'div', key: -1, style: {
       position: 'absolute'
       left: 0
       top: 0
@@ -85,7 +86,7 @@ renderSparkline = (sparkline, detector, h) ->
     }
     for v, i in sparkline
       iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
-      h 'span', { style: {
+      h 'span', { key: i, style: {
         boxSizing: 'border-box'
         position: 'absolute'
         left: i * graphUnitPx + 'px'
@@ -104,13 +105,13 @@ renderBank = (bankIndex, nodeList, h) ->
   nodeHeightPx = 40
   captionHeightPx = 20
 
-  h 'div', style: {
+  h 'div', key: bankIndex, style: {
     position: 'relative'
     display: 'inline-block'
     width: widthPx + 'px'
     height: (captionHeightPx + nodeList.length * nodeHeightPx) + 'px'
   }, [
-    h 'div', style: {
+    h 'div', key: -1, style: {
       position: 'absolute'
       left: 0
       right: 0
@@ -120,7 +121,7 @@ renderBank = (bankIndex, nodeList, h) ->
       textAlign: 'center'
     }, 'Set ' + bankIndex
     for lineNode, i in nodeList
-      h 'div', style: {
+      h 'div', key: i, style: {
         position: 'absolute'
         left: 0
         right: 0
@@ -131,7 +132,7 @@ renderBank = (bankIndex, nodeList, h) ->
       }, lineNode
   ]
 
-vdomLive (renderLive) ->
+document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
   setInterval ->
@@ -140,22 +141,29 @@ vdomLive (renderLive) ->
         detector = bankList[i][j]
         sparkline.shift()
         sparkline.push(4 * detector.rmsValue)
+
+    ReactDOM.render(React.createElement(Demo), root)
   , 100
 
-  liveDOM = renderLive (h) ->
+  h = React.createElement
+
+  Demo = () ->
     h 'div', style: {
       display: 'inline-block'
       marginTop: '50px'
     }, [
       for keyName, i in keyList
         do (i) ->
-          h 'button', style: { fontSize: '120%' }, onclick: (-> runSample i), 'Key: ' + keyName
+          h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
       for sparklineSet, setIndex in sparklineSetList
         lineNodes = for sparkline, sparklineIndex in sparklineSet
           detector = bankList[setIndex][sparklineIndex]
-          renderSparkline sparkline, detector, h
+          renderSparkline sparklineIndex, sparkline, detector, h
 
         renderBank setIndex, lineNodes, h
     ]
 
-  document.body.appendChild liveDOM
+  root = document.createElement('div')
+  document.body.appendChild(root)
+
+  ReactDOM.render(React.createElement(Demo), root)
