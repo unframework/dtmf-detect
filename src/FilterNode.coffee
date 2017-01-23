@@ -9,13 +9,29 @@ class FilterNode extends React.PureComponent
     super()
 
     @_detectorRMSNode = props.detectorRMSNode
+    @_testInputNode = props.testInputNode
+
+  _playTestTone: ->
+    context = @_testInputNode.context
+
+    soundSource = context.createOscillator()
+    soundSource.type = 'sine'
+    soundSource.frequency.value = @_detectorRMSNode.frequency
+    soundSource.start 0
+    soundSource.stop context.currentTime + 1.2
+
+    volumeNode = context.createGain()
+    volumeNode.gain.value = 0.5 # need to temper the test tone, otherwise it clips
+
+    soundSource.connect volumeNode
+    volumeNode.connect @_testInputNode
 
   render: ->
     h 'div', style: {
       position: 'relative'
       display: 'inline-block'
       verticalAlign: 'middle'
-      width: '145px'
+      width: '195px'
       height: '40px'
     }, [
       h 'div', style: {
@@ -33,7 +49,7 @@ class FilterNode extends React.PureComponent
       h 'span', style: {
         position: 'absolute'
         top: '0px'
-        left: '0px'
+        left: '45px'
         fontFamily: 'Courier New, mono'
         fontWeight: 'bold'
         color: '#808080'
@@ -43,6 +59,27 @@ class FilterNode extends React.PureComponent
         border: '1px solid #c0c0c0'
         borderRadius: '5px'
       }, @_detectorRMSNode.frequency + 'Hz'
+
+      h 'button', onClick: (=> @_playTestTone()), style: {
+        boxSizing: 'border-box'
+        position: 'absolute'
+        top: '50%'
+        left: '0px'
+        marginTop: '-15px'
+        width: '40px'
+        height: '30px'
+        padding: '0'
+        fontFamily: 'Courier New, mono'
+        fontWeight: 'bold'
+        fontSize: '12px'
+        color: '#808080'
+        lineHeight: '28px'
+        textAlign: 'center'
+        background: '#e0e0e0'
+        cursor: 'pointer'
+        border: '1px solid #c0c0c0'
+        borderRadius: '5px'
+      }, 'TEST'
     ]
 
 module.exports = FilterNode

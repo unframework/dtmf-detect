@@ -4,7 +4,7 @@ Bank = require('./Bank.coffee')
 
 h = React.createElement
 
-BankScreen = ({ bankList, widthPx, heightPx }) ->
+BankScreen = ({ bankList, testInputNode, widthPx, heightPx }) ->
   h 'div', style: {
     display: 'inline-block'
     position: 'relative'
@@ -16,7 +16,7 @@ BankScreen = ({ bankList, widthPx, heightPx }) ->
     borderRadius: '3px'
   }, (
     for bank, bankIndex in bankList
-      h Bank, label: 'Set ' + bankIndex, bank: bank
+      h Bank, label: 'Set ' + bankIndex, bank: bank, testInputNode: testInputNode
   )
 
 module.exports = BankScreen
