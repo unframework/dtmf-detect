@@ -74,7 +74,10 @@ document.addEventListener 'DOMContentLoaded', ->
           do (i) ->
             h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
       )
-      h BankScreen, bankList: bankList, testInputNode: testInputNode, widthPx: 768, heightPx: 768
+      h BankScreen, bankList: bankList, keyCodeListSet: [
+        [ 49, 50, 51, 52 ]
+        [ 81, 87, 69, 82 ]
+      ], testInputNode: testInputNode, widthPx: 768, heightPx: 768
     ]
 
   root = document.createElement('div')

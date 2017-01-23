@@ -2,7 +2,7 @@ React = require('react')
 
 FilterNode = require('./FilterNode.coffee')
 
-Bank = ({ label, bank, testInputNode }) ->
+Bank = ({ label, bank, keyCodeList, testInputNode }) ->
   h = React.createElement
   widthPx = 210
   nodeHeightPx = 50
@@ -35,7 +35,7 @@ Bank = ({ label, bank, testInputNode }) ->
         height: nodeHeightPx + 'px'
         lineHeight: nodeHeightPx + 'px'
         textAlign: 'center'
-      }, h FilterNode, { detectorRMSNode: detector, testInputNode: testInputNode }
+      }, h FilterNode, { detectorRMSNode: detector, keyCode: keyCodeList[i], testInputNode: testInputNode }
   ]
 
 module.exports = Bank
