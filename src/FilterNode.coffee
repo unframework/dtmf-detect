@@ -16,12 +16,12 @@ class FilterNode extends React.PureComponent
       display: 'inline-block'
       verticalAlign: 'middle'
       width: '145px'
-      height: '30px'
+      height: '40px'
     }, [
       h 'div', style: {
         boxSizing: 'border-box'
         position: 'absolute'
-        top: '1px'
+        top: '0px'
         right: '0px'
         padding: '5px'
         width: '60px'
@@ -31,16 +31,14 @@ class FilterNode extends React.PureComponent
       }, h Sparkline, { detectorRMSNode: @_detectorRMSNode, bufferSize: 10 }
 
       h 'span', style: {
-        boxSizing: 'border-box'
         position: 'absolute'
         top: '0px'
         left: '0px'
-        verticalAlign: 'middle'
         fontFamily: 'Courier New, mono'
         fontWeight: 'bold'
         color: '#808080'
         width: '80px'
-        lineHeight: '40px'
+        lineHeight: '38px'
         textAlign: 'center'
         border: '1px solid #c0c0c0'
         borderRadius: '5px'
