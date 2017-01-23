@@ -1,6 +1,6 @@
 React = require('react')
 
-Sparkline = require('./Sparkline.coffee')
+FilterNode = require('./FilterNode.coffee')
 
 Bank = ({ label, bank }) ->
   h = React.createElement
@@ -32,7 +32,7 @@ Bank = ({ label, bank }) ->
         height: nodeHeightPx + 'px'
         lineHeight: nodeHeightPx + 'px'
         textAlign: 'center'
-      }, h Sparkline, { detectorRMSNode: detector }
+      }, h FilterNode, { detectorRMSNode: detector }
   ]
 
 module.exports = Bank
