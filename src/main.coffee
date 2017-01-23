@@ -65,11 +65,15 @@ document.addEventListener 'DOMContentLoaded', ->
       display: 'inline-block'
       marginTop: '50px'
     }, [
-      for keyName, i in keyList
-        do (i) ->
-          h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
-      for bank, bankIndex in bankList
-        h Bank, label: 'Set ' + bankIndex, bank: bank
+      h 'div', style: { display: 'flex', justifyContent: 'center', marginBottom: '30px' }, (
+        for keyName, i in keyList
+          do (i) ->
+            h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
+      )
+      h 'div', style: { }, (
+        for bank, bankIndex in bankList
+          h Bank, label: 'Set ' + bankIndex, bank: bank
+      )
     ]
 
   root = document.createElement('div')
