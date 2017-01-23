@@ -44,16 +44,20 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FrequencyRMS(context, freq)
 
+# @todo connect microphone only to banks and not audio output
+demoInputNode = context.createDelay()
+
+for bank in bankList
+  for detector in bank
+    demoInputNode.connect detector.audioNode
+
+demoInputNode.connect context.destination
+
 runSample = (index) ->
   soundSource = context.createBufferSource()
   soundSource.buffer = soundBufferList[index]
   soundSource.start 0
-
-  for bank in bankList
-    for detector in bank
-      soundSource.connect detector.audioNode
-
-  soundSource.connect context.destination
+  soundSource.connect demoInputNode
 
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
