@@ -4,13 +4,14 @@ FilterNode = require('./FilterNode.coffee')
 
 Bank = ({ label, bank }) ->
   h = React.createElement
-  widthPx = 100
-  nodeHeightPx = 40
+  widthPx = 160
+  nodeHeightPx = 50
   captionHeightPx = 20
 
   h 'div', style: {
     position: 'relative'
     display: 'inline-block'
+    verticalAlign: 'middle'
     width: widthPx + 'px'
     height: (captionHeightPx + bank.length * nodeHeightPx) + 'px'
   }, [
@@ -22,6 +23,8 @@ Bank = ({ label, bank }) ->
       height: captionHeightPx + 'px'
       lineHeight: captionHeightPx + 'px'
       textAlign: 'center'
+      fontFamily: 'Courier New, mono'
+      fontWeight: 'bold'
     }, label
     for detector, i in bank
       h 'div', key: i, style: {

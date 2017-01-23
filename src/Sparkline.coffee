@@ -1,6 +1,7 @@
 React = require('react')
 
 h = React.createElement
+LINE_BG = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iMyIgaGVpZ2h0PSIzIiBmaWxsPSIjODA4MDgwIj48L3JlY3Q+Cjwvc3ZnPg==") 0 100%'
 
 class Sparkline extends React.PureComponent
   constructor: (props) ->
@@ -27,16 +28,14 @@ class Sparkline extends React.PureComponent
     @_unmounted = true
 
   render: ->
-    heightPx = this.props.heightPx
-    graphUnitPx = this.props.bufferUnitPx
-
-    resolution = heightPx - 2
+    graphUnitPx = 5
+    resolution = 5
+    heightPx = (resolution + 1) * graphUnitPx
     graphWidthPx = @_series.length * graphUnitPx
 
     h 'div', style: {
-      position: 'absolute'
-      left: 0
-      top: 0
+      position: 'relative'
+      display: 'inline-block'
       width: graphWidthPx + 'px'
       height: heightPx + 'px'
       background: '#eee'
@@ -44,17 +43,16 @@ class Sparkline extends React.PureComponent
       for v, i in @_series
         iv = Math.max(0, Math.min(resolution, Math.round(v * resolution)))
 
-        h 'span', { key: i, style: {
+        h 'span', key: i, style: {
           boxSizing: 'content-box'
           position: 'absolute'
-          left: i * graphUnitPx + 'px'
-          bottom: 0
-          width: graphUnitPx + 'px'
-          height: iv + 'px'
-          background: '#666'
-          borderTop: '2px solid #444'
-          transition: 'height 0.1s'
-        } }, ''
+          left: (1 + i * graphUnitPx) + 'px'
+          bottom: '-1px'
+          width: (graphUnitPx - 2) + 'px'
+          height: iv * graphUnitPx + 2 + 'px'
+          background: LINE_BG
+          borderTop: (graphUnitPx - 2) + 'px solid #444'
+        }
     )
 
 module.exports = Sparkline

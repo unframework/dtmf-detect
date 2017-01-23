@@ -2,7 +2,7 @@ React = require('react')
 ReactDOM = require('react-dom')
 
 FrequencyRMS = require('./FrequencyRMS.coffee')
-Bank = require('./Bank.coffee')
+BankScreen = require('./BankScreen.coffee')
 
 createAudioContext = ->
   if typeof window.AudioContext isnt 'undefined'
@@ -70,10 +70,7 @@ document.addEventListener 'DOMContentLoaded', ->
           do (i) ->
             h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
       )
-      h 'div', style: { }, (
-        for bank, bankIndex in bankList
-          h Bank, label: 'Set ' + bankIndex, bank: bank
-      )
+      h BankScreen, bankList: bankList, widthPx: 768, heightPx: 768
     ]
 
   root = document.createElement('div')

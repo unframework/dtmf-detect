@@ -14,16 +14,37 @@ class FilterNode extends React.PureComponent
     h 'div', style: {
       position: 'relative'
       display: 'inline-block'
-      height: '30px'
-      lineHeight: '30px'
       verticalAlign: 'middle'
-      paddingLeft: '30px'
-      width: '60px'
-      textAlign: 'center'
+      width: '145px'
+      height: '30px'
     }, [
-      h Sparkline, { detectorRMSNode: @_detectorRMSNode, bufferSize: 10, bufferUnitPx: 3, heightPx: 30 }
+      h 'div', style: {
+        boxSizing: 'border-box'
+        position: 'absolute'
+        top: '1px'
+        right: '0px'
+        padding: '5px'
+        width: '60px'
+        height: '40px'
+        background: '#c0c0c0'
+        borderRadius: '5px'
+      }, h Sparkline, { detectorRMSNode: @_detectorRMSNode, bufferSize: 10 }
 
-      @_detectorRMSNode.frequency + 'Hz'
+      h 'span', style: {
+        boxSizing: 'border-box'
+        position: 'absolute'
+        top: '0px'
+        left: '0px'
+        verticalAlign: 'middle'
+        fontFamily: 'Courier New, mono'
+        fontWeight: 'bold'
+        color: '#808080'
+        width: '80px'
+        lineHeight: '40px'
+        textAlign: 'center'
+        border: '1px solid #c0c0c0'
+        borderRadius: '5px'
+      }, @_detectorRMSNode.frequency + 'Hz'
     ]
 
 module.exports = FilterNode
