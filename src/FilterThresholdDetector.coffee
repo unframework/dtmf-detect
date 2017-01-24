@@ -4,22 +4,24 @@ RMS_THRESHOLD = 0.1
 DEBOUNCE_DELAY = 0.1
 
 class FilterThresholdDetector
-  constructor: (filterNode) ->
-    @_status = false
-    @_tripTime = null
+  constructor: (rms) ->
     @output = new Readable({ objectMode: true, read: (=>) })
+    @rms = rms
+    @value = false
 
-    filterNode.rmsOutput.on 'data', ({ time, value }) =>
+    @_tripTime = null
+
+    rms.output.on 'data', ({ time, value }) =>
       # see if we crossed the threshold in expected direction
-      isTripped = if @_status then (value < RMS_THRESHOLD) else (value >= RMS_THRESHOLD)
+      isTripped = if @value then (value < RMS_THRESHOLD) else (value >= RMS_THRESHOLD)
 
       if isTripped
         # track time of initial crossing and flip status when sustained for long enough
         if @_tripTime is null
           @_tripTime = time
         else if time >= @_tripTime + DEBOUNCE_DELAY
-          @_status = not @_status
-          @output.push({ time: time, value: @_status })
+          @value = not @value
+          @output.push({ time: time, value: @value })
       else
         @_tripTime = null
 

@@ -18,7 +18,7 @@ class FrequencyRMS
         sum += x * x
 
       @rmsValue = Math.sqrt(sum / channelData.length)
-      @rmsOutput.push({ time: context.currentTime, value: @rmsValue })
+      @output.push({ time: context.currentTime, value: @rmsValue })
 
     freqFilter.connect @_rmsComputer
     @_rmsComputer.connect context.destination
@@ -27,6 +27,6 @@ class FrequencyRMS
     @audioNode = freqFilter
     @rmsValue = 0
 
-    @rmsOutput = new Readable({ objectMode: true, read: (=>) })
+    @output = new Readable({ objectMode: true, read: (=>) })
 
 module.exports = FrequencyRMS
