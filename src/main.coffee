@@ -47,7 +47,11 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FilterThresholdDetector(new FrequencyRMS(context, freq))
 
-coder = new Coder(new BankSelector(bankList[0]), new BankSelector(bankList[1]))
+coder = new Coder(new BankSelector(bankList[0]), new BankSelector(bankList[1]), [
+  '1', '4', '7', '*'
+  '2', '5', '8', '0'
+  '3', '6', '9', '#'
+])
 
 # @todo connect microphone only to banks and not audio output
 testInputNode = context.createDelay()

@@ -1,10 +1,11 @@
 Readable = require('stream').Readable
 
 class Coder
-  constructor: (loSelector, hiSelector) ->
+  constructor: (loSelector, hiSelector, lookupTable) ->
     @value = null
     @output = new Readable({ objectMode: true, read: (=>) })
 
+    @_lookupTable = lookupTable
     @_lo = loSelector
     @_hi = hiSelector
 
@@ -14,7 +15,7 @@ class Coder
   _recomputeValue: ->
     @value = (
       if @_lo.value isnt null and @_hi.value isnt null
-        @_hi.value * @_lo.range + @_lo.value
+        @_lookupTable[@_hi.value * @_lo.range + @_lo.value]
       else
         null
     )
