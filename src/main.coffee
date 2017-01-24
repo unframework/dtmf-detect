@@ -5,6 +5,7 @@ FrequencyRMS = require('./FrequencyRMS.coffee')
 FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
 BankSelector = require('./BankSelector.coffee')
 Coder = require('./Coder.coffee')
+InputPanel = require('./InputPanel.coffee')
 BankScreen = require('./BankScreen.coffee')
 ResultDisplay = require('./ResultDisplay.coffee')
 
@@ -46,8 +47,13 @@ document.addEventListener 'DOMContentLoaded', ->
   Demo = () ->
     h 'div', style: {
       display: 'inline-block'
-      marginTop: '10px'
     },
+    (
+      h InputPanel
+    ),
+    (
+      h 'div', style: { height: '10px' }
+    ),
     (
       h BankScreen, bankList: bankList, keyCodeListSet: [
         [ 49, 50, 51, 52 ]
