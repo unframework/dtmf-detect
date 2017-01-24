@@ -4,6 +4,7 @@ ReactDOM = require('react-dom')
 FrequencyRMS = require('./FrequencyRMS.coffee')
 FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
 BankSelector = require('./BankSelector.coffee')
+Coder = require('./Coder.coffee')
 BankScreen = require('./BankScreen.coffee')
 
 createAudioContext = ->
@@ -46,7 +47,7 @@ bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
     new FilterThresholdDetector(new FrequencyRMS(context, freq))
 
-selectorList = new BankSelector(bank) for bank in bankList
+coder = new Coder(new BankSelector(bankList[0]), new BankSelector(bankList[1]))
 
 # @todo connect microphone only to banks and not audio output
 testInputNode = context.createDelay()

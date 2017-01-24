@@ -2,6 +2,7 @@ Readable = require('stream').Readable
 
 class BankSelector
   constructor: (bank) ->
+    @range = bank.length
     @value = null
     @output = new Readable({ objectMode: true, read: (=>) })
 
@@ -29,7 +30,6 @@ class BankSelector
     @_recomputeValue()
 
     if oldValue isnt @value
-      console.log @value
       @output.push { time: time, value: @value }
 
 module.exports = BankSelector
