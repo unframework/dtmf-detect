@@ -77,7 +77,7 @@ document.addEventListener 'DOMContentLoaded', ->
   Demo = () ->
     h 'div', style: {
       display: 'inline-block'
-      marginTop: '50px'
+      marginTop: '10px'
     }, [
       h 'div', style: { display: 'flex', justifyContent: 'center', marginBottom: '30px' }, (
         for keyName, i in keyList
