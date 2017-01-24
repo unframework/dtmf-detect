@@ -1,12 +1,11 @@
 React = require('react')
+D = require('react-dynamics')
 
 h = React.createElement
 
-class CodeBuffer extends React.PureComponent
+class CoderListener extends React.PureComponent
   constructor: ({ coder }) ->
     super()
-
-    @state = { codeBuffer: [] }
 
     @_coder = coder
     @_dataListener = @_onCodeData.bind(this)
@@ -19,10 +18,10 @@ class CodeBuffer extends React.PureComponent
 
   _onCodeData: ({ time, value }) ->
     requestAnimationFrame =>
-      @setState (state) => { codeBuffer: state.codeBuffer.concat [ value ] }
+      @props.onCode value
 
   render: ->
-    return @props.contents(@state.codeBuffer)
+    if @props.contents then @props.contents() else null
 
 ResultScreen = ({ coder }) ->
   h 'div', style: {
@@ -33,12 +32,31 @@ ResultScreen = ({ coder }) ->
     overflow: 'hidden',
     border: '1px solid #c0c0c0'
     borderRadius: '3px'
-  }, h CodeBuffer, coder: coder, contents: (codeBuffer) =>
+  }, [
     h 'span', style: {
+      display: 'inline-block'
+      verticalAlign: 'middle'
       fontFamily: 'Courier New, mono'
       fontSize: '32px'
       fontWeight: 'bold'
+      height: '64px'
       lineHeight: '64px'
-    }, codeBuffer.join ''
+    }, (
+      h D.Notice, contents: (show, render) ->
+        (render (codeBuffer, Status) ->
+          h D.Expirable, on: codeBuffer, delayMs: 5000, contents: (expiryState) -> h Status, on: expiryState, contents: ->
+            h CoderListener, coder: coder, onCode: ((code) -> show codeBuffer + code), contents: ->
+              h 'span', {}, codeBuffer
+        ) or h CoderListener, coder: coder, onCode: ((code) -> show code)
+    )
+    h 'span', style: {
+      display: 'inline-block'
+      verticalAlign: 'middle'
+      marginLeft: '2px'
+      width: '3px'
+      height: '48px'
+      background: '#c0c0c0'
+    }
+  ]
 
 module.exports = ResultScreen
