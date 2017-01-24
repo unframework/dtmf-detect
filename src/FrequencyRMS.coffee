@@ -1,5 +1,6 @@
 Readable = require('stream').Readable
 
+# @todo use RxJS instead of streams? marries nicely to React display then
 class FrequencyRMS
   constructor: (context, freq) ->
     freqFilter = context.createBiquadFilter()
