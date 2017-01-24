@@ -4,7 +4,7 @@ FilterNode = require('./FilterNode.coffee')
 
 Bank = ({ label, bank, keyCodeList, testInputNode }) ->
   h = React.createElement
-  widthPx = 210
+  widthPx = 240
   nodeHeightPx = 50
   captionHeightPx = 20
 

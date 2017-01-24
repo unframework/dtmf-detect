@@ -77,7 +77,7 @@ document.addEventListener 'DOMContentLoaded', ->
       h BankScreen, bankList: bankList, keyCodeListSet: [
         [ 49, 50, 51, 52 ]
         [ 81, 87, 69, 82 ]
-      ], testInputNode: testInputNode, widthPx: 768, heightPx: 768
+      ], testInputNode: testInputNode, widthPx: 768, heightPx: 512
     ]
 
   root = document.createElement('div')
