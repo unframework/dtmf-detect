@@ -35,7 +35,7 @@ Bank = ({ label, bank, keyCodeList, testInputNode }) ->
         height: nodeHeightPx + 'px'
         lineHeight: nodeHeightPx + 'px'
         textAlign: 'center'
-      }, h FilterNode, { detectorRMSNode: detector, keyCode: keyCodeList[i], testInputNode: testInputNode }
+      }, h FilterNode, { thresholdDetector: detector, keyCode: keyCodeList[i], testInputNode: testInputNode }
   ]
 
 module.exports = Bank

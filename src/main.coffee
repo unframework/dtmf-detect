@@ -43,15 +43,10 @@ soundBufferList = for x, i in keyList
 # http://dsp.stackexchange.com/questions/15594/how-can-i-reduce-noise-errors-when-detecting-dtmf-with-the-goertzel-algorithm
 bankList = for freqSet in [ [ 697, 770, 852, 941 ], [ 1209, 1336, 1477 ] ]
   for freq in freqSet
-    new FrequencyRMS(context, freq)
+    new FilterThresholdDetector(new FrequencyRMS(context, freq))
 
 class BankDetector
   constructor: (bank) ->
-    for filterNode, i in bank
-      do (i) =>
-        detector = new FilterThresholdDetector(filterNode)
-        detector.output.on 'data', ({ value }) =>
-          console.log 'tripped', i, 'to be', value
 
 detector = new BankDetector(bankList[0])
 
@@ -60,7 +55,7 @@ testInputNode = context.createDelay()
 
 for bank in bankList
   for detector in bank
-    testInputNode.connect detector.audioNode
+    testInputNode.connect detector.rms.audioNode
 
 testInputNode.connect context.destination
 

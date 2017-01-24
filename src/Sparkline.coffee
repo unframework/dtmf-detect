@@ -9,13 +9,13 @@ class Sparkline extends React.PureComponent
   constructor: (props) ->
     super()
 
-    @_detectorRMSNode = props.detectorRMSNode
+    @_detectorRMS = props.detectorRMS
     @_series = (0 for [ 0 ... props.bufferSize ])
     @_unmounted = false
 
   _processFrame: ->
     @_series.shift()
-    @_series.push(RMS_GAIN * @_detectorRMSNode.rmsValue)
+    @_series.push(RMS_GAIN * @_detectorRMS.rmsValue)
 
   componentDidMount: ->
     intervalId = setInterval =>
