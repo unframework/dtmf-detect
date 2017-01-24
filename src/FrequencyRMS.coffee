@@ -9,7 +9,8 @@ class FrequencyRMS
     freqFilter.frequency.value = freq
 
     # saving ref on object to avoid garbage collection on mobile
-    @_rmsComputer = context.createScriptProcessor(1024, 1, 1)
+    # using a low buffer size for better latency
+    @_rmsComputer = context.createScriptProcessor(256, 1, 1)
     @_rmsComputer.onaudioprocess = (e) =>
       channelData = e.inputBuffer.getChannelData(0)
 
