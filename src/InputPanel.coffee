@@ -52,7 +52,7 @@ InputPanel = ({ onInputStream }) ->
     }, 'Select Input:'
   ),
   (
-    h MicrophoneRequestButton
+    h MicrophoneRequestButton, onInputStream: onInputStream
   )
 
 module.exports = InputPanel

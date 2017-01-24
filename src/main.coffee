@@ -39,6 +39,20 @@ for bank in bankList
 
 testInputNode.connect context.destination
 
+currentMicrophoneInputNode = null
+
+setMicrophoneInputNode = (stream) ->
+  if currentMicrophoneInputNode
+    throw new Error 'mic already connected'
+
+  sourceNode = context.createMediaStreamSource(stream)
+
+  for bank in bankList
+    for detector in bank
+      sourceNode.connect detector.rms.audioNode
+
+  currentMicrophoneInputNode = sourceNode
+
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
@@ -49,7 +63,7 @@ document.addEventListener 'DOMContentLoaded', ->
       display: 'inline-block'
     },
     (
-      h InputPanel
+      h InputPanel, onInputStream: (stream) -> setMicrophoneInputNode(stream)
     ),
     (
       h 'div', style: { height: '10px' }
