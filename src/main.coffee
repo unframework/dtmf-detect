@@ -78,19 +78,26 @@ document.addEventListener 'DOMContentLoaded', ->
     h 'div', style: {
       display: 'inline-block'
       marginTop: '10px'
-    }, [
+    },
+    (
       h 'div', style: { display: 'flex', justifyContent: 'center', marginBottom: '30px' }, (
         for keyName, i in keyList
           do (i) ->
             h 'button', key: i, style: { fontSize: '120%' }, onClick: (-> runSample i), 'Key: ' + keyName
       )
+    ),
+    (
       h BankScreen, bankList: bankList, keyCodeListSet: [
         [ 49, 50, 51, 52 ]
         [ 81, 87, 69, 82 ]
       ], testInputNode: testInputNode, widthPx: 768, heightPx: 512
+    ),
+    (
       h 'div', style: { height: '10px' }
+    ),
+    (
       h ResultDisplay, { coder: coder }
-    ]
+    )
 
   root = document.createElement('div')
   document.body.appendChild(root)

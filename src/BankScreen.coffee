@@ -17,6 +17,7 @@ BankScreen = ({ bankList, keyCodeListSet, testInputNode, widthPx, heightPx }) ->
   }, (
     for bank, bankIndex in bankList
       h Bank,
+        key: bankIndex
         label: 'Set ' + bankIndex
         bank: bank
         keyCodeList: keyCodeListSet[bankIndex]

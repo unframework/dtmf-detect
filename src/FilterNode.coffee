@@ -103,7 +103,7 @@ class FilterNode extends React.PureComponent
       verticalAlign: 'middle'
       width: '195px'
       height: '40px'
-    }, [
+    }, (
       h 'div', style: {
         boxSizing: 'border-box'
         position: 'absolute'
@@ -115,7 +115,9 @@ class FilterNode extends React.PureComponent
         background: '#c0c0c0'
         borderRadius: '5px'
       }, h Sparkline, { detectorRMS: @_detector.rms, bufferSize: 10 }
+    ),
 
+    (
       h 'span', style: {
         position: 'absolute'
         top: '0px'
@@ -130,7 +132,9 @@ class FilterNode extends React.PureComponent
         background: if @state.thresholdStatus then '#e0ffe0' else '#fff'
         borderRadius: '5px'
       }, @_detector.rms.frequency + 'Hz'
+    ),
 
+    (
       h Hotkeyable, keyCode: @props.keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
         h ToneTester, frequency: @_detector.rms.frequency, testInputNode: @_testInputNode, on: keyState or pressState, contents: (testerState) =>
           h 'button', style: {
@@ -154,6 +158,6 @@ class FilterNode extends React.PureComponent
             borderRadius: '5px'
             boxShadow: (if testerState then '0px 0px 10px -5px #000 inset' else '')
           }, 'TEST'
-    ]
+    )
 
 module.exports = FilterNode

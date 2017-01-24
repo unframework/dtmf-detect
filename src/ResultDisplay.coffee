@@ -32,7 +32,8 @@ ResultScreen = ({ coder }) ->
     overflow: 'hidden',
     border: '1px solid #c0c0c0'
     borderRadius: '3px'
-  }, [
+  },
+  (
     h 'span', style: {
       display: 'inline-block'
       verticalAlign: 'middle'
@@ -49,6 +50,8 @@ ResultScreen = ({ coder }) ->
               h 'span', {}, codeBuffer
         ) or h CoderListener, coder: coder, onCode: ((code) -> show code)
     )
+  ),
+  (
     h 'span', style: {
       display: 'inline-block'
       verticalAlign: 'middle'
@@ -57,6 +60,6 @@ ResultScreen = ({ coder }) ->
       height: '48px'
       background: '#c0c0c0'
     }
-  ]
+  )
 
 module.exports = ResultScreen
