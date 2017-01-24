@@ -6,6 +6,7 @@ FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
 BankSelector = require('./BankSelector.coffee')
 Coder = require('./Coder.coffee')
 BankScreen = require('./BankScreen.coffee')
+ResultDisplay = require('./ResultDisplay.coffee')
 
 createAudioContext = ->
   if typeof window.AudioContext isnt 'undefined'
@@ -87,6 +88,8 @@ document.addEventListener 'DOMContentLoaded', ->
         [ 49, 50, 51, 52 ]
         [ 81, 87, 69, 82 ]
       ], testInputNode: testInputNode, widthPx: 768, heightPx: 512
+      h 'div', style: { height: '10px' }
+      h ResultDisplay, { coder: coder }
     ]
 
   root = document.createElement('div')

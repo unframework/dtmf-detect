@@ -24,7 +24,6 @@ class Coder
     @_recomputeValue()
 
     if @value isnt null
-      console.log @value
       @output.push { time: time, value: @value }
 
 module.exports = Coder
