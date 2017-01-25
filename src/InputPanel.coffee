@@ -1,4 +1,5 @@
 React = require('react')
+ReactDOM = require('react-dom')
 D = require('react-dynamics')
 
 h = React.createElement
@@ -56,6 +57,56 @@ class MicrophoneStreamStatus extends React.PureComponent
   render: ->
     @props.contents @state.isActive
 
+# inspired by https://github.com/kylestetz/AudioDrop/blob/master/AudioDrop.js
+class FileDropTarget extends React.PureComponent
+  constructor: ->
+    super()
+
+    @state = { dropActive: false }
+
+    @_enterListener = @_onDragChange.bind(this, true)
+    @_leaveListener = @_onDragChange.bind(this, false)
+    @_overListener = @_onDragOver.bind(this)
+    @_dropListener = @_onDrop.bind(this)
+
+  _onDragChange: (isEntering, e) ->
+    e.stopPropagation()
+    if isEntering then e.preventDefault() # helps signal a valid target
+
+    @setState { dropActive: isEntering }
+
+  _onDragOver: (e) ->
+    e.stopPropagation()
+    e.preventDefault() # helps signal a valid target
+
+  _onDrop: (e) ->
+    e.stopPropagation()
+    e.preventDefault()
+
+    for file in Array.prototype.slice.call(e.dataTransfer.files) when file.type.indexOf('audio') isnt -1
+      @props.onDrop file
+
+    @setState { dropActive: false } # no dragleave event will happen
+
+  componentDidMount: ->
+    dom = ReactDOM.findDOMNode(this)
+
+    dom.addEventListener 'dragenter', @_enterListener, false
+    dom.addEventListener 'dragleave', @_leaveListener, false
+    dom.addEventListener 'dragover', @_overListener, false
+    dom.addEventListener 'drop', @_dropListener, false
+
+  componentWillUnmount: ->
+    dom = ReactDOM.findDOMNode(this)
+
+    dom.removeEventListener 'dragenter', @_enterListener
+    dom.removeEventListener 'dragleave', @_leaveListener
+    dom.removeEventListener 'dragover', @_overListener
+    dom.removeEventListener 'drop', @_dropListener
+
+  render: ->
+    @props.contents(@state.dropActive)
+
 InputPanel = ({ onInputStream }) ->
   h D.Notice, contents: (setMicStream, renderCurrentStream, hasActiveMicStream) ->
     h 'div', style: {
@@ -68,6 +119,7 @@ InputPanel = ({ onInputStream }) ->
     },
     (
       h 'span', style: {
+        display: 'inline-block'
         padding: '0 10px'
         height: '64px'
         lineHeight: '64px'
@@ -79,6 +131,15 @@ InputPanel = ({ onInputStream }) ->
           streamIsActive and h DisplayStatus, on: true, contents: ->
             h 'button', onClick: (-> stream.getTracks()[0].stop()), 'Stop Listening'
       ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; onInputStream stream)
+    ),
+    (
+      h FileDropTarget, onDrop: ((file) -> console.log file), contents: (dropActive) -> h 'span', style: {
+        display: 'inline-block'
+        padding: '0 10px'
+        height: '64px'
+        lineHeight: '64px'
+        background: (if dropActive then '#f0f0f0' else '')
+      }, '[Drop Audio File Here]'
     )
 
 module.exports = InputPanel
