@@ -1,8 +1,8 @@
 Readable = require('stream').Readable
 
-RMS_THRESHOLD = 0.1
+RMS_THRESHOLD = 0.01
 DEBOUNCE_DELAY_ON = 0.005 # quick switch-on
-DEBOUNCE_DELAY_OFF = 0.1 # slow switch-off
+DEBOUNCE_DELAY_OFF = 0.01 # slow switch-off
 
 class FilterThresholdDetector
   constructor: (rms) ->
