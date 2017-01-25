@@ -41,7 +41,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode }) ->
       lineHeight: '38px'
       textAlign: 'center'
       border: '1px solid #c0c0c0'
-      background: if data.value then '#e0ffe0' else '#fff'
+      background: if data and data.value then '#e0ffe0' else '#fff'
       borderRadius: '5px'
     }, thresholdDetector.rms.frequency + 'Hz'
   ),
