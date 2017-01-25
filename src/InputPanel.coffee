@@ -62,7 +62,7 @@ class FileDropTarget extends React.PureComponent
   constructor: ->
     super()
 
-    @state = { dropActive: false }
+    @state = { dragStack: 0 }
 
     @_enterListener = @_onDragChange.bind(this, true)
     @_leaveListener = @_onDragChange.bind(this, false)
@@ -73,7 +73,7 @@ class FileDropTarget extends React.PureComponent
     e.stopPropagation()
     if isEntering then e.preventDefault() # helps signal a valid target
 
-    @setState { dropActive: isEntering }
+    @setState (state) -> { dragStack: state.dragStack + (if isEntering then 1 else -1) }
 
   _onDragOver: (e) ->
     e.stopPropagation()
@@ -86,7 +86,7 @@ class FileDropTarget extends React.PureComponent
     for file in Array.prototype.slice.call(e.dataTransfer.files) when file.type.indexOf('audio') isnt -1
       @props.onDrop file
 
-    @setState { dropActive: false } # no dragleave event will happen
+    @setState { dragStack: 0 } # no dragleave event will happen
 
   componentDidMount: ->
     dom = ReactDOM.findDOMNode(this)
@@ -105,7 +105,7 @@ class FileDropTarget extends React.PureComponent
     dom.removeEventListener 'drop', @_dropListener
 
   render: ->
-    @props.contents(@state.dropActive)
+    @props.contents(@state.dragStack > 0)
 
 hookupMicStream = (stream, inputNode) ->
   sourceNode = context.createMediaStreamSource(stream)
