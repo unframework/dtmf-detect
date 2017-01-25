@@ -83,7 +83,7 @@ class FileDropTarget extends React.PureComponent
     e.stopPropagation()
     e.preventDefault()
 
-    for file in Array.prototype.slice.call(e.dataTransfer.files) when file.type.indexOf('audio') isnt -1
+    for file in Array.prototype.slice.call(e.dataTransfer.files)
       @props.onDrop file
 
     @setState { dragStack: 0 } # no dragleave event will happen
@@ -114,6 +114,21 @@ hookupMicStream = (stream, inputNode) ->
   stream.getTracks()[0].addEventListener 'ended', ->
     sourceNode.disconnect()
 
+decodeBuffer = (context, file) ->
+  new Promise (resolve, reject) ->
+    fr = new FileReader()
+
+    fr.onload = (e) ->
+      context.decodeAudioData e.target.result, (buffer) ->
+        resolve buffer
+      , (error) ->
+        reject error
+
+    fr.readAsArrayBuffer(file)
+
+playSample = (buffer) ->
+  console.log buffer
+
 InputPanel = ({ inputNode }) ->
   h D.Notice, contents: (setMicStream, renderCurrentStream, hasActiveMicStream) ->
     h 'div', style: {
@@ -140,13 +155,37 @@ InputPanel = ({ inputNode }) ->
       ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; hookupMicStream stream)
     ),
     (
-      h FileDropTarget, onDrop: ((file) -> console.log file), contents: (dropActive) -> h 'span', style: {
-        display: 'inline-block'
-        padding: '0 10px'
-        height: '64px'
-        lineHeight: '64px'
-        background: (if dropActive then '#f0f0f0' else '')
-      }, '[Drop Audio File Here]'
+      h D.Notice, contents: (setFileInfo, renderCurrentFileInfo) ->
+        h D.Submittable, action: ((file) -> decodeBuffer(inputNode.context, file).then (data) -> { data: data, file: file }), onSuccess: setFileInfo, contents: (error, isPending, decodeFile) ->
+          h FileDropTarget, onDrop: ((file) -> decodeFile file), contents: (dropActive) -> h 'span', style: {
+            display: 'inline-block'
+            verticalAlign: 'middle'
+            padding: '0 10px'
+            width: '10em'
+            height: '64px'
+            lineHeight: '64px'
+            textAlign: 'center'
+            background: (if dropActive then '#f0f0f0' else '')
+          }, (
+            (
+              error and h 'span', style: { display: 'inline-block', lineHeight: '64px', color: '#f00' }, 'Error: ' + (error.name or error.toString())
+            ) or (
+              renderCurrentFileInfo (fileInfo) ->
+                h 'span', {},
+                  (h 'span', style: {
+                    display: 'inline-block'
+                    verticalAlign: 'middle'
+                    maxWidth: '60%'
+                    maxHeight: '100%'
+                    overflow: 'hidden'
+                    fontSize: '12px'
+                    lineHeight: '1em'
+                  }, fileInfo.file.name)
+                  (h 'button', onClick: (() -> playSample fileInfo.data), 'Play')
+            ) or (
+              h 'span', style: { display: 'inline-block', lineHeight: '64px' }, '[Drop Audio File Here]'
+            )
+          )
     )
 
 module.exports = InputPanel
