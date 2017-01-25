@@ -30,6 +30,11 @@ coder = new Coder(new BankSelector(bankList[0]), new BankSelector(bankList[1]), 
   '3', '6', '9', '#'
 ])
 
+keyCodeListSet = [
+  [ 49, 50, 51, 52 ]
+  [ 81, 87, 69, 82 ]
+]
+
 inputNode = context.createDelay()
 
 for bank in bankList
@@ -52,10 +57,7 @@ document.addEventListener 'DOMContentLoaded', ->
       h 'div', style: { height: '10px' }
     ),
     (
-      h BankScreen, bankList: bankList, keyCodeListSet: [
-        [ 49, 50, 51, 52 ]
-        [ 81, 87, 69, 82 ]
-      ], inputNode: inputNode, widthPx: 768, heightPx: 512
+      h BankScreen, bankList: bankList, keyCodeListSet: keyCodeListSet, inputNode: inputNode, widthPx: 768, heightPx: 512
     ),
     (
       h 'div', style: { height: '10px' }
