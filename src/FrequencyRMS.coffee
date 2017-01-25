@@ -9,6 +9,8 @@ class FrequencyRMS
     freqFilter.Q.value = 300 # seems small enough of a band for given range
     freqFilter.frequency.value = freq
 
+    sampleCount = 0
+
     # saving ref on object to avoid garbage collection on mobile
     # using a low buffer size for better latency
     @_rmsComputer = context.createScriptProcessor(256, 1, 1)
@@ -19,8 +21,10 @@ class FrequencyRMS
       for x in channelData
         sum += x * x
 
+      sampleCount += channelData.length
+
       @rmsValue = Math.sqrt(sum / channelData.length)
-      @output.emit('data', { time: context.currentTime, value: @rmsValue })
+      @output.emit('data', { time: sampleCount / context.sampleRate, value: @rmsValue })
 
     freqFilter.connect @_rmsComputer
     @_rmsComputer.connect context.destination
