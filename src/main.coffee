@@ -1,5 +1,6 @@
 React = require('react')
 ReactDOM = require('react-dom')
+D = require('react-dynamics')
 
 FrequencyRMS = require('./FrequencyRMS.coffee')
 FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
@@ -59,11 +60,21 @@ document.addEventListener 'DOMContentLoaded', ->
       h 'div', style: { height: '10px' }
     ),
     (
-      h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+      h D.Linkable, path: '/banks', contents: (banksNavState) -> h D.Linkable, path: '/grid', contents: (gridNavState) ->
+        h 'div', style: { display: 'inline-block', position: 'relative' },
+          (
+            h 'div', style: { position: 'absolute', zIndex: 1, left: '5px', bottom: '5px' },
+              (h 'a', href: '#/', style: { display: 'inline-block', margin: '0 5px', fontWeight: if not banksNavState and not gridNavState then 'bold' else null }, 'Main'),
+              (h 'a', href: '#/banks', style: { display: 'inline-block', margin: '0 5px', fontWeight: if banksNavState then 'bold' else null }, 'Banks'),
+              (h 'a', href: '#/grid', style: { display: 'inline-block', margin: '0 5px', fontWeight: if gridNavState then 'bold' else null }, 'Grid')
+          ),
+          if banksNavState
+            h BankScreen, bankList: bankList, keyCodeListSet: keyCodeListSet, inputNode: inputNode, widthPx: 768, heightPx: 512
+          else if gridNavState
+            h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+          else
+            h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
     ),
-    # (
-    #   h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
-    # ),
     (
       h 'div', style: { height: '10px' }
     ),
