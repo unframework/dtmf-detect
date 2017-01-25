@@ -43,6 +43,20 @@ FrequencyCard = ({ frequency, detectorValue }) ->
     borderRadius: '5px'
   }, frequency + 'Hz'
 
+CodeCard = ({ code, loDetectorValue, hiDetectorValue }) ->
+  h 'span', style: {
+    display: 'inline-block'
+    fontFamily: 'Courier New, mono'
+    fontWeight: 'bold'
+    color: '#808080'
+    width: '80px'
+    lineHeight: '38px'
+    textAlign: 'center'
+    border: '1px solid #c0c0c0'
+    background: if loDetectorValue or hiDetectorValue then (if loDetectorValue and hiDetectorValue then '#ffe0e0' else '#e0e0e0') else '#fff'
+    borderRadius: '5px'
+  }, code
+
 GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heightPx }) ->
   bankWidthPx = 240
   nodeHeightPx = 50
@@ -91,7 +105,11 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heigh
           h TestButton, keyCode: keyCodeListSet[0][lo], frequency: loDetector.rms.frequency, inputNode: inputNode
       ), (
         for hiDetector, hi in hiBank
-          h 'div', key: hi, style: tdStyle, coder.getCode(lo, hi)
+          h 'div', key: hi, style: tdStyle,
+            h CodeCard,
+              loDetectorValue: detectorStates['lo' + lo],
+              hiDetectorValue: detectorStates['hi' + hi],
+              code: coder.getCode(lo, hi)
       )
   )
 
