@@ -6,6 +6,7 @@ FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
 BankSelector = require('./BankSelector.coffee')
 Coder = require('./Coder.coffee')
 InputPanel = require('./InputPanel.coffee')
+BasicScreen = require('./BasicScreen.coffee')
 BankScreen = require('./BankScreen.coffee')
 GridScreen = require('./GridScreen.coffee')
 ResultDisplay = require('./ResultDisplay.coffee')
@@ -58,8 +59,11 @@ document.addEventListener 'DOMContentLoaded', ->
       h 'div', style: { height: '10px' }
     ),
     (
-      h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+      h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
     ),
+    # (
+    #   h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+    # ),
     (
       h 'div', style: { height: '10px' }
     ),

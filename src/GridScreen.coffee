@@ -58,9 +58,6 @@ CodeCard = ({ code, loDetectorValue, hiDetectorValue }) ->
   }, code
 
 GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heightPx }) ->
-  bankWidthPx = 240
-  nodeHeightPx = 50
-  captionHeightPx = 20
   tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '140px', height: '60px' }
 
   groupItems = {}
