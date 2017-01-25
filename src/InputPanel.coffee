@@ -108,7 +108,7 @@ class FileDropTarget extends React.PureComponent
     @props.contents(@state.dragStack > 0)
 
 hookupMicStream = (stream, inputNode) ->
-  sourceNode = context.createMediaStreamSource(stream)
+  sourceNode = inputNode.context.createMediaStreamSource(stream)
   sourceNode.connect inputNode
 
   stream.getTracks()[0].addEventListener 'ended', ->
@@ -157,7 +157,7 @@ InputPanel = ({ inputNode }) ->
         h MicrophoneStreamStatus, stream: stream, contents: (streamIsActive) ->
           streamIsActive and h DisplayStatus, on: true, contents: ->
             h 'button', onClick: (-> stream.getTracks()[0].stop()), 'Stop Listening'
-      ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; hookupMicStream stream)
+      ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; hookupMicStream stream, inputNode)
     ),
     (
       h D.Notice, contents: (setFileInfo, renderCurrentFileInfo) ->
