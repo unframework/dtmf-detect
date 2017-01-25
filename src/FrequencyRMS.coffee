@@ -1,4 +1,4 @@
-Readable = require('stream').Readable
+EventEmitter = require('events').EventEmitter
 
 # @todo use RxJS instead of streams? marries nicely to React display then
 class FrequencyRMS
@@ -20,7 +20,7 @@ class FrequencyRMS
         sum += x * x
 
       @rmsValue = Math.sqrt(sum / channelData.length)
-      @output.push({ time: context.currentTime, value: @rmsValue })
+      @output.emit('data', { time: context.currentTime, value: @rmsValue })
 
     freqFilter.connect @_rmsComputer
     @_rmsComputer.connect context.destination
@@ -29,6 +29,6 @@ class FrequencyRMS
     @audioNode = freqFilter
     @rmsValue = 0
 
-    @output = new Readable({ objectMode: true, read: (=>) })
+    @output = new EventEmitter()
 
 module.exports = FrequencyRMS

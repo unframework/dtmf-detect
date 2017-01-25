@@ -1,10 +1,10 @@
-Readable = require('stream').Readable
+EventEmitter = require('events').EventEmitter
 
 class BankSelector
   constructor: (bank) ->
     @range = bank.length
     @value = null
-    @output = new Readable({ objectMode: true, read: (=>) })
+    @output = new EventEmitter()
 
     @_status = (detector.value for detector in bank)
     @_recomputeValue()
@@ -30,6 +30,6 @@ class BankSelector
     @_recomputeValue()
 
     if oldValue isnt @value
-      @output.push { time: time, value: @value }
+      @output.emit 'data', { time: time, value: @value }
 
 module.exports = BankSelector

@@ -1,4 +1,4 @@
-Readable = require('stream').Readable
+EventEmitter = require('events').EventEmitter
 
 RMS_THRESHOLD = 0.01
 DEBOUNCE_DELAY_ON = 0.005 # quick switch-on
@@ -6,7 +6,7 @@ DEBOUNCE_DELAY_OFF = 0.01 # slow switch-off
 
 class FilterThresholdDetector
   constructor: (rms) ->
-    @output = new Readable({ objectMode: true, read: (=>) })
+    @output = new EventEmitter()
     @rms = rms
     @value = false
 
@@ -22,7 +22,7 @@ class FilterThresholdDetector
           @_tripTime = time
         else if time >= @_tripTime + (if @value then DEBOUNCE_DELAY_OFF else DEBOUNCE_DELAY_ON)
           @value = not @value
-          @output.push({ time: time, value: @value })
+          @output.emit('data', { time: time, value: @value })
       else
         @_tripTime = null
 
