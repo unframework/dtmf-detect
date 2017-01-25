@@ -30,12 +30,11 @@ coder = new Coder(new BankSelector(bankList[0]), new BankSelector(bankList[1]), 
   '3', '6', '9', '#'
 ])
 
-# @todo connect microphone only to banks and not audio output
-testInputNode = context.createDelay()
+inputNode = context.createDelay()
 
 for bank in bankList
   for detector in bank
-    testInputNode.connect detector.rms.audioNode
+    inputNode.connect detector.rms.audioNode
 
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
@@ -47,7 +46,7 @@ document.addEventListener 'DOMContentLoaded', ->
       display: 'inline-block'
     },
     (
-      h InputPanel, inputNode: testInputNode
+      h InputPanel, inputNode: inputNode
     ),
     (
       h 'div', style: { height: '10px' }
@@ -56,7 +55,7 @@ document.addEventListener 'DOMContentLoaded', ->
       h BankScreen, bankList: bankList, keyCodeListSet: [
         [ 49, 50, 51, 52 ]
         [ 81, 87, 69, 82 ]
-      ], testInputNode: testInputNode, widthPx: 768, heightPx: 512
+      ], inputNode: inputNode, widthPx: 768, heightPx: 512
     ),
     (
       h 'div', style: { height: '10px' }

@@ -37,7 +37,7 @@ class ToneTester extends React.PureComponent
     super()
 
     @_frequency = props.frequency
-    @_testInputNode = props.testInputNode
+    @_testInputNode = props.inputNode
     @_soundSource = null
 
   componentDidMount: ->
@@ -84,7 +84,7 @@ class FilterNode extends React.PureComponent
     @state = { thresholdStatus: false }
 
     @_detector = props.thresholdDetector
-    @_testInputNode = props.testInputNode
+    @_testInputNode = props.inputNode
     @_dataListener = @_onThresholdData.bind(this)
 
   componentWillMount: ->
@@ -137,7 +137,7 @@ class FilterNode extends React.PureComponent
 
     (
       h Hotkeyable, keyCode: @props.keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
-        h ToneTester, frequency: @_detector.rms.frequency, testInputNode: @_testInputNode, on: keyState or pressState, contents: (testerState) =>
+        h ToneTester, frequency: @_detector.rms.frequency, inputNode: @_testInputNode, on: keyState or pressState, contents: (testerState) =>
           h 'button', style: {
             boxSizing: 'border-box'
             position: 'absolute'
