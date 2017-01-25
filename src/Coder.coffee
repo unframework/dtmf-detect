@@ -12,6 +12,9 @@ class Coder
     loSelector.output.on 'data', ({ time }) => @_processChange(time)
     hiSelector.output.on 'data', ({ time }) => @_processChange(time)
 
+  getCode: (lo, hi) ->
+    @_lookupTable[hi * @_lo.range + lo]
+
   _recomputeValue: ->
     @value = (
       if @_lo.value isnt null and @_hi.value isnt null
