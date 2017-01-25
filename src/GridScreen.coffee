@@ -32,9 +32,11 @@ TestButton = ({ keyCode, frequency, inputNode }) ->
 FrequencyCard = ({ frequency, detectorValue }) ->
   h 'span', style: {
     display: 'inline-block'
+    verticalAlign: 'middle'
     fontFamily: 'Courier New, mono'
     fontWeight: 'bold'
-    color: '#808080'
+    fontSize: '18px'
+    color: '#404040'
     width: '80px'
     lineHeight: '38px'
     textAlign: 'center'
@@ -46,10 +48,12 @@ FrequencyCard = ({ frequency, detectorValue }) ->
 CodeCard = ({ code, loDetectorValue, hiDetectorValue }) ->
   h 'span', style: {
     display: 'inline-block'
+    verticalAlign: 'middle'
     fontFamily: 'Courier New, mono'
     fontWeight: 'bold'
-    color: '#808080'
-    width: '80px'
+    fontSize: '24px'
+    color: '#404040'
+    width: '60px'
     lineHeight: '38px'
     textAlign: 'center'
     border: '1px solid #c0c0c0'
@@ -58,7 +62,8 @@ CodeCard = ({ code, loDetectorValue, hiDetectorValue }) ->
   }, code
 
 GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heightPx }) ->
-  tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '140px', height: '60px' }
+  tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '80px', height: '40px' }
+  tdLeadStyle = Object.assign {}, tdStyle, width: '140px'
 
   groupItems = {}
   for loDetector, lo in loBank
@@ -79,13 +84,13 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heigh
     display: 'table'
     tableLayout: 'fixed'
     border: 0
-    margin: '40px auto'
+    margin: '20px auto'
     padding: 0
     cellSpacing: 0
     lineHeight: '1em'
   }, (
     h 'div', style: { display: 'table-row' }, (
-      h 'div', style: tdStyle, ''
+      h 'div', style: tdLeadStyle, ''
     ), (
       for hiDetector, hi in hiBank
         h 'div', key: hi, style: tdStyle,
@@ -96,9 +101,9 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heigh
   ), (
     for loDetector, lo in loBank
       h 'div', key: lo, style: { display: 'table-row' }, (
-        h 'div', style: tdStyle,
+        h 'div', style: tdLeadStyle,
           (h FrequencyCard, frequency: loDetector.rms.frequency, detectorValue: detectorStates['lo' + lo]),
-          (h 'div', style: { display: 'inline-block', width: '10px' }),
+          (h 'div', style: { display: 'inline-block', verticalAlign: 'middle', width: '10px' }),
           h TestButton, keyCode: keyCodeListSet[0][lo], frequency: loDetector.rms.frequency, inputNode: inputNode
       ), (
         for hiDetector, hi in hiBank

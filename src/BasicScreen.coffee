@@ -14,24 +14,24 @@ TestButton = ({ code, loFrequency, loDetectorValue, hiFrequency, hiDetectorValue
         h 'button', style: {
           boxSizing: 'border-box'
           display: 'inline-block'
-          width: '40px'
-          height: '50px'
+          width: '50px'
+          height: '60px'
           padding: '0'
           fontFamily: 'Courier New, mono'
           fontWeight: 'bold'
           fontSize: '24px'
-          color: '#808080'
-          lineHeight: '48px'
+          color: '#404040'
+          lineHeight: '58px'
           textAlign: 'center'
           background: (if loDetectorValue and hiDetectorValue then '#c0ffc0' else '#e0e0e0')
           cursor: 'pointer'
           border: '1px solid #c0c0c0'
           borderRadius: '5px'
-          boxShadow: (if loDetectorValue and hiDetectorValue then '0px 0px 10px -5px #000 inset' else '')
+          boxShadow: (if loDetectorValue and hiDetectorValue then '0px 0px 25px -5px #040 inset' else '')
         }, code
 
 BasicScreen = ({ loBank, hiBank, coder, inputNode, widthPx, heightPx }) ->
-  tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '80px', height: '80px' }
+  tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '50px', height: '60px' }
 
   groupItems = {}
   for loDetector, lo in loBank
@@ -52,7 +52,7 @@ BasicScreen = ({ loBank, hiBank, coder, inputNode, widthPx, heightPx }) ->
     display: 'table'
     tableLayout: 'fixed'
     border: 0
-    margin: '40px auto'
+    margin: '20px auto'
     padding: 0
     cellSpacing: 0
     lineHeight: '1em'

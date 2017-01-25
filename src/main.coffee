@@ -69,11 +69,11 @@ document.addEventListener 'DOMContentLoaded', ->
               (h 'a', href: '#/grid', style: { display: 'inline-block', margin: '0 5px', fontWeight: if gridNavState then 'bold' else null }, 'Grid')
           ),
           if banksNavState
-            h BankScreen, bankList: bankList, keyCodeListSet: keyCodeListSet, inputNode: inputNode, widthPx: 768, heightPx: 512
+            h BankScreen, bankList: bankList, keyCodeListSet: keyCodeListSet, inputNode: inputNode, widthPx: 768, heightPx: 400
           else if gridNavState
-            h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+            h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 400
           else
-            h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 512
+            h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, widthPx: 768, heightPx: 400
     ),
     (
       h 'div', style: { height: '10px' }
