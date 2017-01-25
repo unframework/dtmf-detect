@@ -41,10 +41,10 @@ BasicScreen = ({ loBank, hiBank, coder, inputNode, widthPx, heightPx }) ->
 
   h 'div', style: {
     display: 'inline-block'
+    verticalAlign: 'middle'
     position: 'relative'
     width: widthPx + 'px'
     height: heightPx + 'px'
-    lineHeight: heightPx + 'px'
     overflow: 'hidden',
     border: '1px solid #c0c0c0'
     borderRadius: '3px'
