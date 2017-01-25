@@ -37,28 +37,6 @@ for bank in bankList
   for detector in bank
     testInputNode.connect detector.rms.audioNode
 
-testInputNode.connect context.destination
-
-currentMicrophoneInputNode = null
-
-setMicrophoneInputNode = (stream) ->
-  if currentMicrophoneInputNode
-    throw new Error 'mic already connected'
-
-  sourceNode = context.createMediaStreamSource(stream)
-
-  for bank in bankList
-    for detector in bank
-      sourceNode.connect detector.rms.audioNode
-
-  stream.getTracks()[0].addEventListener 'ended', ->
-    sourceNode.disconnect()
-
-    if currentMicrophoneInputNode is sourceNode
-      currentMicrophoneInputNode = null
-
-  currentMicrophoneInputNode = sourceNode
-
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
@@ -69,7 +47,7 @@ document.addEventListener 'DOMContentLoaded', ->
       display: 'inline-block'
     },
     (
-      h InputPanel, onInputStream: (stream) -> setMicrophoneInputNode(stream)
+      h InputPanel, inputNode: testInputNode
     ),
     (
       h 'div', style: { height: '10px' }

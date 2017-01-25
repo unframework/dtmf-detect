@@ -107,7 +107,14 @@ class FileDropTarget extends React.PureComponent
   render: ->
     @props.contents(@state.dropActive)
 
-InputPanel = ({ onInputStream }) ->
+hookupMicStream = (stream, inputNode) ->
+  sourceNode = context.createMediaStreamSource(stream)
+  sourceNode.connect inputNode
+
+  stream.getTracks()[0].addEventListener 'ended', ->
+    sourceNode.disconnect()
+
+InputPanel = ({ inputNode }) ->
   h D.Notice, contents: (setMicStream, renderCurrentStream, hasActiveMicStream) ->
     h 'div', style: {
       display: 'inline-block'
@@ -130,7 +137,7 @@ InputPanel = ({ onInputStream }) ->
         h MicrophoneStreamStatus, stream: stream, contents: (streamIsActive) ->
           streamIsActive and h DisplayStatus, on: true, contents: ->
             h 'button', onClick: (-> stream.getTracks()[0].stop()), 'Stop Listening'
-      ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; onInputStream stream)
+      ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; hookupMicStream stream)
     ),
     (
       h FileDropTarget, onDrop: ((file) -> console.log file), contents: (dropActive) -> h 'span', style: {

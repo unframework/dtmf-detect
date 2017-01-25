@@ -67,6 +67,7 @@ class ToneTester extends React.PureComponent
 
       @_soundSource.connect volumeNode
       volumeNode.connect @_testInputNode
+      volumeNode.connect context.destination
 
   _stopSound: ->
     if @_soundSource
