@@ -4,7 +4,7 @@ class StreamValue extends React.PureComponent
   constructor: (props) ->
     super()
 
-    @state = { latestValue: false }
+    @state = { latestValue: null }
 
     @_stream = props.stream
     @_dataListener = @_onThresholdData.bind(this)

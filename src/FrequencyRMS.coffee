@@ -1,6 +1,7 @@
 EventEmitter = require('events').EventEmitter
 
 # @todo use RxJS instead of streams? marries nicely to React display then
+# @todo this has a super long decay for some reason!
 class FrequencyRMS
   constructor: (context, freq) ->
     freqFilter = context.createBiquadFilter()
