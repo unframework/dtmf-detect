@@ -2,6 +2,7 @@ React = require('react')
 D = require('react-dynamics')
 
 Hotkeyable = require('./Hotkeyable.coffee')
+StreamValue = require('./StreamValue.coffee')
 ToneTester = require('./ToneTester.coffee')
 Sparkline = require('./Sparkline.coffee')
 
@@ -11,21 +12,8 @@ class FilterNode extends React.PureComponent
   constructor: (props) ->
     super()
 
-    @state = { thresholdStatus: false }
-
     @_detector = props.thresholdDetector
     @_testInputNode = props.inputNode
-    @_dataListener = @_onThresholdData.bind(this)
-
-  componentWillMount: ->
-    @_detector.output.on 'data', @_dataListener
-
-  componentWillUnmount: ->
-    @_detector.output.removeListener 'data', @_dataListener
-
-  _onThresholdData: ({ time, value }) ->
-    requestAnimationFrame =>
-      @setState({ thresholdStatus: value })
 
   render: ->
     h 'div', style: {
@@ -49,7 +37,7 @@ class FilterNode extends React.PureComponent
     ),
 
     (
-      h 'span', style: {
+      h StreamValue, stream: @_detector.output, contents: (data) => h 'span', style: {
         position: 'absolute'
         top: '0px'
         left: '45px'
@@ -60,7 +48,7 @@ class FilterNode extends React.PureComponent
         lineHeight: '38px'
         textAlign: 'center'
         border: '1px solid #c0c0c0'
-        background: if @state.thresholdStatus then '#e0ffe0' else '#fff'
+        background: if data.value then '#e0ffe0' else '#fff'
         borderRadius: '5px'
       }, @_detector.rms.frequency + 'Hz'
     ),
