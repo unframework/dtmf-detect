@@ -126,8 +126,13 @@ decodeBuffer = (context, file) ->
 
     fr.readAsArrayBuffer(file)
 
-playSample = (buffer) ->
-  console.log buffer
+playSample = (buffer, inputNode) ->
+  soundSource = inputNode.context.createBufferSource()
+  soundSource.buffer = buffer
+  soundSource.start 0
+
+  soundSource.connect inputNode
+  soundSource.connect inputNode.context.destination
 
 InputPanel = ({ inputNode }) ->
   h D.Notice, contents: (setMicStream, renderCurrentStream, hasActiveMicStream) ->
@@ -181,7 +186,7 @@ InputPanel = ({ inputNode }) ->
                     fontSize: '12px'
                     lineHeight: '1em'
                   }, fileInfo.file.name)
-                  (h 'button', onClick: (() -> playSample fileInfo.data), 'Play')
+                  (h 'button', onClick: (() -> playSample fileInfo.data, inputNode), 'Play')
             ) or (
               h 'span', style: { display: 'inline-block', lineHeight: '64px' }, '[Drop Audio File Here]'
             )
