@@ -51,6 +51,12 @@ setMicrophoneInputNode = (stream) ->
     for detector in bank
       sourceNode.connect detector.rms.audioNode
 
+  stream.getTracks()[0].addEventListener 'ended', ->
+    sourceNode.disconnect()
+
+    if currentMicrophoneInputNode is sourceNode
+      currentMicrophoneInputNode = null
+
   currentMicrophoneInputNode = sourceNode
 
 document.addEventListener 'DOMContentLoaded', ->
