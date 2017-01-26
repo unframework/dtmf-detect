@@ -47,6 +47,60 @@ for bank in bankList
 previewNode = context.createGain()
 previewNode.connect context.destination
 
+currentSoloNode = null
+
+createSoloNode = ->
+  soloNode = context.createGain()
+  soloNode.connect context.destination
+
+  previewNode.gain.value = 0
+  currentSoloNode = soloNode
+
+clearSoloNode = (soloNode) ->
+  soloNode.disconnect()
+
+  if currentSoloNode is soloNode
+    currentSoloNode = null
+    previewNode.gain.value = 1
+
+class SoloNodeContext extends React.PureComponent
+  constructor: () ->
+    super()
+
+    @_soloNode = null
+
+  componentWillMount: ->
+    if @props.on
+      @_setupNode()
+
+  componentWillReceiveProps: (nextProps) ->
+    if @props.on isnt nextProps.on
+      if @props.on
+        @_cleanupNode()
+
+      if nextProps.on
+        @_setupNode()
+
+  componentWillUnmount: ->
+    if @props.on
+      @_cleanupNode()
+
+  _setupNode: ->
+    if @_soloNode
+      throw new Error 'node already set'
+
+    @_soloNode = createSoloNode()
+
+  _cleanupNode: ->
+    if not @_soloNode
+      throw new Error 'node not set'
+
+    clearSoloNode @_soloNode
+    @_soloNode = null
+
+  render: ->
+    @props.contents @_soloNode
+
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
@@ -72,11 +126,33 @@ document.addEventListener 'DOMContentLoaded', ->
               (h 'a', href: '#/grid', style: { display: 'inline-block', margin: '0 5px', fontWeight: if gridNavState then 'bold' else null }, 'Grid')
           ),
           if banksNavState
-            h BankScreen, bankList: bankList, keyCodeListSet: keyCodeListSet, inputNode: inputNode, previewNode: previewNode, widthPx: 768, heightPx: 400
+            h BankScreen,
+              bankList: bankList
+              keyCodeListSet: keyCodeListSet
+              inputNode: inputNode
+              previewNode: previewNode
+              SoloNodeContext: SoloNodeContext
+              widthPx: 768
+              heightPx: 400
           else if gridNavState
-            h GridScreen, loBank: bankList[0], hiBank: bankList[1], keyCodeListSet: keyCodeListSet, coder: coder, inputNode: inputNode, previewNode: previewNode, widthPx: 768, heightPx: 400
+            h GridScreen,
+              loBank: bankList[0]
+              hiBank: bankList[1]
+              keyCodeListSet: keyCodeListSet
+              coder: coder
+              inputNode: inputNode
+              previewNode: previewNode
+              widthPx: 768
+              heightPx: 400
           else
-            h BasicScreen, loBank: bankList[0], hiBank: bankList[1], coder: coder, inputNode: inputNode, previewNode: previewNode, widthPx: 768, heightPx: 400
+            h BasicScreen,
+              loBank: bankList[0]
+              hiBank: bankList[1]
+              coder: coder
+              inputNode: inputNode
+              previewNode: previewNode
+              widthPx: 768
+              heightPx: 400
     ),
     (
       h 'div', style: { height: '10px' }

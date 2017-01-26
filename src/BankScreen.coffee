@@ -8,7 +8,7 @@ Sparkline = require('./Sparkline.coffee')
 
 h = React.createElement
 
-FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode }) ->
+FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode, SoloNodeContext }) ->
   h 'div', style: {
     position: 'relative'
     display: 'inline-block'
@@ -16,7 +16,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode }) ->
     width: '195px'
     height: '40px'
   }, (
-    h 'div', style: {
+    h D.Pressable, contents: (pressState) -> h SoloNodeContext, on: pressState, contents: (soloNode) -> h 'div', style: {
       boxSizing: 'border-box'
       position: 'absolute'
       top: '0px'
@@ -24,7 +24,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode }) ->
       padding: '5px'
       width: '60px'
       height: '40px'
-      background: '#c0c0c0'
+      background: (if soloNode then '#e0e0e0' else '#c0c0c0')
       borderRadius: '5px'
     }, h Sparkline, { detectorRMS: thresholdDetector.rms, bufferSize: 10 }
   ),
@@ -73,7 +73,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode }) ->
         }, 'TEST'
   )
 
-BankScreen = ({ bankList, keyCodeListSet, inputNode, previewNode, widthPx, heightPx }) ->
+BankScreen = ({ bankList, keyCodeListSet, inputNode, previewNode, SoloNodeContext, widthPx, heightPx }) ->
   bankWidthPx = 240
   nodeHeightPx = 50
   captionHeightPx = 20
@@ -117,7 +117,12 @@ BankScreen = ({ bankList, keyCodeListSet, inputNode, previewNode, widthPx, heigh
             height: nodeHeightPx + 'px'
             lineHeight: nodeHeightPx + 'px'
             textAlign: 'center'
-          }, h FilterNode, { thresholdDetector: detector, keyCode: keyCodeListSet[bankIndex][i], inputNode: inputNode, previewNode: previewNode }
+          }, h FilterNode,
+            thresholdDetector: detector
+            keyCode: keyCodeListSet[bankIndex][i]
+            inputNode: inputNode
+            previewNode: previewNode
+            SoloNodeContext: SoloNodeContext
       ]
   )
 
