@@ -7,10 +7,10 @@ ToneTester = require('./ToneTester.coffee')
 
 h = React.createElement
 
-TestButton = ({ code, loFrequency, loDetectorValue, hiFrequency, hiDetectorValue, inputNode }) ->
+TestButton = ({ code, loFrequency, loDetectorValue, hiFrequency, hiDetectorValue, inputNode, previewNode }) ->
   h D.Pressable, contents: (pressState) =>
-    h ToneTester, frequency: loFrequency, inputNode: inputNode, on: pressState, contents: () =>
-      h ToneTester, frequency: hiFrequency, inputNode: inputNode, on: pressState, contents: () =>
+    h ToneTester, frequency: loFrequency, inputNode: inputNode, previewNode: previewNode, on: pressState, contents: () =>
+      h ToneTester, frequency: hiFrequency, inputNode: inputNode, previewNode: previewNode, on: pressState, contents: () =>
         h 'button', style: {
           boxSizing: 'border-box'
           display: 'inline-block'
@@ -30,7 +30,7 @@ TestButton = ({ code, loFrequency, loDetectorValue, hiFrequency, hiDetectorValue
           boxShadow: (if loDetectorValue and hiDetectorValue then '0px 0px 25px -5px #040 inset' else '')
         }, code
 
-BasicScreen = ({ loBank, hiBank, coder, inputNode, widthPx, heightPx }) ->
+BasicScreen = ({ loBank, hiBank, coder, inputNode, previewNode, widthPx, heightPx }) ->
   tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '50px', height: '60px' }
 
   groupItems = {}
@@ -68,6 +68,7 @@ BasicScreen = ({ loBank, hiBank, coder, inputNode, widthPx, heightPx }) ->
               hiFrequency: hiDetector.rms.frequency,
               hiDetectorValue: detectorStates['hi' + hi],
               inputNode: inputNode
+              previewNode: previewNode
       )
   )
 

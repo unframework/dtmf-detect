@@ -7,9 +7,9 @@ ToneTester = require('./ToneTester.coffee')
 
 h = React.createElement
 
-TestButton = ({ keyCode, frequency, inputNode }) ->
+TestButton = ({ keyCode, frequency, inputNode, previewNode }) ->
   h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
-    h ToneTester, frequency: frequency, inputNode: inputNode, on: keyState or pressState, contents: (testerState) =>
+    h ToneTester, frequency: frequency, inputNode: inputNode, previewNode: previewNode, on: keyState or pressState, contents: (testerState) =>
       h 'button', style: {
         boxSizing: 'border-box'
         display: 'inline-block'
@@ -61,7 +61,7 @@ CodeCard = ({ code, loDetectorValue, hiDetectorValue }) ->
     borderRadius: '5px'
   }, code
 
-GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heightPx }) ->
+GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, previewNode, widthPx, heightPx }) ->
   tdStyle = { display: 'table-cell', verticalAlign: 'middle', textAlign: 'center', border: 0, padding: '10px', width: '80px', height: '40px' }
   tdLeadStyle = Object.assign {}, tdStyle, width: '140px'
 
@@ -96,7 +96,7 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heigh
         h 'div', key: hi, style: tdStyle,
           (h FrequencyCard, frequency: hiDetector.rms.frequency, detectorValue: detectorStates['hi' + hi]),
           (h 'div', style: { height: '10px' }),
-          h TestButton, keyCode: keyCodeListSet[1][hi], frequency: hiDetector.rms.frequency, inputNode: inputNode
+          h TestButton, keyCode: keyCodeListSet[1][hi], frequency: hiDetector.rms.frequency, inputNode: inputNode, previewNode: previewNode
     )
   ), (
     for loDetector, lo in loBank
@@ -104,7 +104,7 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, widthPx, heigh
         h 'div', style: tdLeadStyle,
           (h FrequencyCard, frequency: loDetector.rms.frequency, detectorValue: detectorStates['lo' + lo]),
           (h 'div', style: { display: 'inline-block', verticalAlign: 'middle', width: '10px' }),
-          h TestButton, keyCode: keyCodeListSet[0][lo], frequency: loDetector.rms.frequency, inputNode: inputNode
+          h TestButton, keyCode: keyCodeListSet[0][lo], frequency: loDetector.rms.frequency, inputNode: inputNode, previewNode: previewNode
       ), (
         for hiDetector, hi in hiBank
           h 'div', key: hi, style: tdStyle,

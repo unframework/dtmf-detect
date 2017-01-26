@@ -8,7 +8,7 @@ Sparkline = require('./Sparkline.coffee')
 
 h = React.createElement
 
-FilterNode = ({ keyCode, thresholdDetector, inputNode }) ->
+FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode }) ->
   h 'div', style: {
     position: 'relative'
     display: 'inline-block'
@@ -49,7 +49,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode }) ->
 
   (
     h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
-      h ToneTester, frequency: thresholdDetector.rms.frequency, inputNode: inputNode, on: keyState or pressState, contents: (testerState) =>
+      h ToneTester, frequency: thresholdDetector.rms.frequency, inputNode: inputNode, previewNode: previewNode, on: keyState or pressState, contents: (testerState) =>
         h 'button', style: {
           boxSizing: 'border-box'
           position: 'absolute'
@@ -73,7 +73,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode }) ->
         }, 'TEST'
   )
 
-BankScreen = ({ bankList, keyCodeListSet, inputNode, widthPx, heightPx }) ->
+BankScreen = ({ bankList, keyCodeListSet, inputNode, previewNode, widthPx, heightPx }) ->
   bankWidthPx = 240
   nodeHeightPx = 50
   captionHeightPx = 20
@@ -117,7 +117,7 @@ BankScreen = ({ bankList, keyCodeListSet, inputNode, widthPx, heightPx }) ->
             height: nodeHeightPx + 'px'
             lineHeight: nodeHeightPx + 'px'
             textAlign: 'center'
-          }, h FilterNode, { thresholdDetector: detector, keyCode: keyCodeListSet[bankIndex][i], inputNode: inputNode }
+          }, h FilterNode, { thresholdDetector: detector, keyCode: keyCodeListSet[bankIndex][i], inputNode: inputNode, previewNode: previewNode }
       ]
   )
 

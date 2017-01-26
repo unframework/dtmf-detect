@@ -6,6 +6,7 @@ class ToneTester extends React.PureComponent
 
     @_frequency = props.frequency
     @_testInputNode = props.inputNode
+    @_previewNode = props.previewNode
     @_soundSource = null
 
   componentDidMount: ->
@@ -35,7 +36,7 @@ class ToneTester extends React.PureComponent
 
       @_soundSource.connect volumeNode
       volumeNode.connect @_testInputNode
-      volumeNode.connect context.destination
+      volumeNode.connect @_previewNode
 
   _stopSound: ->
     if @_soundSource
