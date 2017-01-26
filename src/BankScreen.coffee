@@ -16,17 +16,20 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode, SoloNodeCont
     width: '195px'
     height: '40px'
   }, (
-    h D.Pressable, contents: (pressState) -> h SoloNodeContext, on: pressState, contents: (soloNode) -> h 'div', style: {
-      boxSizing: 'border-box'
-      position: 'absolute'
-      top: '0px'
-      right: '0px'
-      padding: '5px'
-      width: '60px'
-      height: '40px'
-      background: (if soloNode then '#e0e0e0' else '#c0c0c0')
-      borderRadius: '5px'
-    }, h Sparkline, { detectorRMS: thresholdDetector.rms, bufferSize: 10 }
+    h D.Pressable, contents: (pressState) -> h SoloNodeContext,
+      input: (if pressState then thresholdDetector.rms.filterOutputNode else null)
+      contents: (isActive) -> h 'div', style: {
+        boxSizing: 'border-box'
+        position: 'absolute'
+        top: '0px'
+        right: '0px'
+        padding: '5px'
+        width: '60px'
+        height: '40px'
+        cursor: 'pointer'
+        background: (if isActive then '#e0e0e0' else '#c0c0c0')
+        borderRadius: '5px'
+      }, h Sparkline, { detectorRMS: thresholdDetector.rms, bufferSize: 10 }
   ),
 
   (

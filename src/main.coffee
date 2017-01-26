@@ -47,59 +47,51 @@ for bank in bankList
 previewNode = context.createGain()
 previewNode.connect context.destination
 
-currentSoloNode = null
+soloNodeStack = []
 
-createSoloNode = ->
-  soloNode = context.createGain()
+addSoloNode = (soloNode) ->
+  if soloNodeStack.indexOf(soloNode) isnt -1
+    throw new Error 'already tracked as solo node'
+
+  soloNodeStack.push soloNode
+  previewNode.gain.value = 0
+
   soloNode.connect context.destination
 
-  previewNode.gain.value = 0
-  currentSoloNode = soloNode
+removeSoloNode = (soloNode) ->
+  nodeIndex = soloNodeStack.indexOf(soloNode)
 
-clearSoloNode = (soloNode) ->
-  soloNode.disconnect()
+  if nodeIndex is -1
+    throw new Error 'not tracked as solo node'
 
-  if currentSoloNode is soloNode
-    currentSoloNode = null
+  soloNode.disconnect context.destination
+
+  soloNodeStack.splice nodeIndex, 1
+  if soloNodeStack.length is 0
     previewNode.gain.value = 1
 
 class SoloNodeContext extends React.PureComponent
   constructor: () ->
     super()
 
-    @_soloNode = null
-
   componentWillMount: ->
-    if @props.on
-      @_setupNode()
+    if @props.input
+      addSoloNode @props.input
 
   componentWillReceiveProps: (nextProps) ->
-    if @props.on isnt nextProps.on
-      if @props.on
-        @_cleanupNode()
+    if @props.input isnt nextProps.input
+      if @props.input
+        removeSoloNode @props.input
 
-      if nextProps.on
-        @_setupNode()
+      if nextProps.input
+        addSoloNode nextProps.input
 
   componentWillUnmount: ->
-    if @props.on
-      @_cleanupNode()
-
-  _setupNode: ->
-    if @_soloNode
-      throw new Error 'node already set'
-
-    @_soloNode = createSoloNode()
-
-  _cleanupNode: ->
-    if not @_soloNode
-      throw new Error 'node not set'
-
-    clearSoloNode @_soloNode
-    @_soloNode = null
+    if @props.input
+      removeSoloNode @props.input
 
   render: ->
-    @props.contents @_soloNode
+    @props.contents !!@props.input
 
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';

@@ -10,6 +10,8 @@ class FrequencyRMS
     freqFilter.Q.value = 300 # seems small enough of a band for given range
     freqFilter.frequency.value = freq
 
+    @filterOutputNode = freqFilter
+
     sampleCount = 0
 
     # saving ref on object to avoid garbage collection on mobile
