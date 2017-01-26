@@ -3,7 +3,7 @@ React = require('react')
 h = React.createElement
 LINE_BG = 'url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iMyIgaGVpZ2h0PSIzIiBmaWxsPSIjODA4MDgwIj48L3JlY3Q+Cjwvc3ZnPg==") 0 100%'
 
-RMS_GAIN = 8
+RMS_GAIN = 2
 
 class Sparkline extends React.PureComponent
   constructor: (props) ->

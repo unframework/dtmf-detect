@@ -1,6 +1,6 @@
 EventEmitter = require('events').EventEmitter
 
-RMS_THRESHOLD = 0.01
+RMS_THRESHOLD = 0.1
 DEBOUNCE_DELAY_ON = 0.005 # quick switch-on
 DEBOUNCE_DELAY_OFF = 0.01 # slow switch-off
 

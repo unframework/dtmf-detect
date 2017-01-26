@@ -38,11 +38,21 @@ keyCodeListSet = [
   [ 81, 87, 69, 82 ]
 ]
 
-inputNode = context.createDelay()
+inputCompressor = context.createDynamicsCompressor()
+inputCompressor.threshold.value = -10
+inputCompressor.knee.value = 1
+inputCompressor.ratio.value = 20
+inputCompressor.attack.value = 0
+inputCompressor.release.value = 0.1
 
 for bank in bankList
   for detector in bank
-    inputNode.connect detector.rms.audioNode
+    inputCompressor.connect detector.rms.audioNode
+
+inputNode = context.createGain()
+inputNode.gain.value = 8
+
+inputNode.connect inputCompressor
 
 previewNode = context.createGain()
 previewNode.connect context.destination

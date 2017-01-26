@@ -7,7 +7,7 @@ class FrequencyRMS
     freqFilter = context.createBiquadFilter()
     freqFilter.channelCount = 1
     freqFilter.type = 'bandpass'
-    freqFilter.Q.value = 300 # seems small enough of a band for given range
+    freqFilter.Q.value = 60 # seems small enough of a band for given range
     freqFilter.frequency.value = freq
 
     @filterOutputNode = freqFilter
