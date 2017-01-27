@@ -8,7 +8,7 @@ ToneTester = require('./ToneTester.coffee')
 h = React.createElement
 
 TestButton = ({ keyCode, frequency, inputNode, previewNode }) ->
-  h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
+  h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, {}, (pressState) =>
     h ToneTester, frequency: frequency, inputNode: inputNode, previewNode: previewNode, on: keyState or pressState, contents: (testerState) =>
       h 'button', style: {
         boxSizing: 'border-box'
@@ -80,7 +80,7 @@ GridScreen = ({ loBank, hiBank, keyCodeListSet, coder, inputNode, previewNode, w
     overflow: 'hidden',
     border: '1px solid #c0c0c0'
     borderRadius: '3px'
-  }, h D.GroupState, items: groupItems, contents: (detectorStates) -> h 'div', style: {
+  }, h D.GroupState, items: groupItems, (detectorStates) -> h 'div', style: {
     display: 'table'
     tableLayout: 'fixed'
     border: 0

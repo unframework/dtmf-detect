@@ -97,7 +97,7 @@ document.addEventListener 'DOMContentLoaded', ->
       h 'div', style: { height: '10px' }
     ),
     (
-      h D.Linkable, path: '/banks', contents: (banksNavState) -> h D.Linkable, path: '/grid', contents: (gridNavState) ->
+      h D.Linkable, path: '/banks', (banksNavState) -> h D.Linkable, path: '/grid', (gridNavState) ->
         h 'div', style: { display: 'inline-block', position: 'relative' },
           (
             h 'div', style: { position: 'absolute', zIndex: 1, left: '5px', bottom: '5px' },

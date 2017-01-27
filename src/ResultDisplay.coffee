@@ -43,9 +43,9 @@ ResultScreen = ({ coder }) ->
       height: '64px'
       lineHeight: '64px'
     }, (
-      h D.Notice, contents: (show, render) ->
+      h D.Notice, {}, (show, render) ->
         (render (codeBuffer, Status) ->
-          h D.Expirable, on: codeBuffer, delayMs: 5000, contents: (expiryState) -> h Status, on: expiryState, contents: ->
+          h D.Expirable, on: codeBuffer, delayMs: 5000, (expiryState) -> h Status, on: expiryState, ->
             h CoderListener, coder: coder, onCode: ((code) -> show codeBuffer + code), contents: ->
               h 'span', {}, codeBuffer
         ) or h CoderListener, coder: coder, onCode: ((code) -> show code)

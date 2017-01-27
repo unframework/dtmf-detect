@@ -16,7 +16,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode, SoloNodeCont
     width: '195px'
     height: '40px'
   }, (
-    h D.Pressable, contents: (pressState) -> h SoloNodeContext,
+    h D.Pressable, {}, (pressState) -> h SoloNodeContext,
       input: (if pressState then thresholdDetector.rms.filterOutputNode else null)
       contents: (isActive) -> h 'div', style: {
         boxSizing: 'border-box'
@@ -51,7 +51,7 @@ FilterNode = ({ keyCode, thresholdDetector, inputNode, previewNode, SoloNodeCont
   ),
 
   (
-    h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, contents: (pressState) =>
+    h Hotkeyable, keyCode: keyCode, contents: (keyState) => h D.Pressable, {}, (pressState) =>
       h ToneTester, frequency: thresholdDetector.rms.frequency, inputNode: inputNode, previewNode: previewNode, on: keyState or pressState, contents: (testerState) =>
         h 'button', style: {
           boxSizing: 'border-box'

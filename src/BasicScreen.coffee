@@ -8,7 +8,7 @@ ToneTester = require('./ToneTester.coffee')
 h = React.createElement
 
 TestButton = ({ code, loFrequency, loDetectorValue, hiFrequency, hiDetectorValue, inputNode, previewNode }) ->
-  h D.Pressable, contents: (pressState) =>
+  h D.Pressable, {}, (pressState) =>
     h ToneTester, frequency: loFrequency, inputNode: inputNode, previewNode: previewNode, on: pressState, contents: () =>
       h ToneTester, frequency: hiFrequency, inputNode: inputNode, previewNode: previewNode, on: pressState, contents: () =>
         h 'button', style: {
@@ -48,7 +48,7 @@ BasicScreen = ({ loBank, hiBank, coder, inputNode, previewNode, widthPx, heightP
     overflow: 'hidden',
     border: '1px solid #c0c0c0'
     borderRadius: '3px'
-  }, h D.GroupState, items: groupItems, contents: (detectorStates) -> h 'div', style: {
+  }, h D.GroupState, items: groupItems, (detectorStates) -> h 'div', style: {
     display: 'table'
     tableLayout: 'fixed'
     border: 0

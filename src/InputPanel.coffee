@@ -9,7 +9,7 @@ getUserMediaPromise = ->
     navigator.getUserMedia { audio: true }, ((stream) -> resolve stream), ((error) -> reject error)
 
 MicrophoneRequestButton = ({ onInputStream }) ->
-  h D.Submittable, action: (-> getUserMediaPromise()), onSuccess: ((v) -> onInputStream v), contents: (error, isPending, invoke) ->
+  h D.Submittable, action: (-> getUserMediaPromise()), onSuccess: ((v) -> onInputStream v), (error, isPending, invoke) ->
     h 'div', style: {
       display: 'inline-block'
       verticalAlign: 'middle'
@@ -19,7 +19,7 @@ MicrophoneRequestButton = ({ onInputStream }) ->
       h 'button', disabled: isPending, onClick: invoke, 'Start Microphone'
     ),
     (
-      h D.Expirable, on: error, delayMs: 3000, contents: (errorExpiryState) -> errorExpiryState and h 'span', style: {
+      h D.Expirable, on: error, delayMs: 3000, (errorExpiryState) -> errorExpiryState and h 'span', style: {
         position: 'absolute'
         marginBottom: '5px'
         bottom: '100%'
@@ -135,7 +135,7 @@ playSample = (buffer, inputNode, previewNode) ->
   soundSource.connect previewNode
 
 InputPanel = ({ inputNode, previewNode }) ->
-  h D.Notice, contents: (setMicStream, renderCurrentStream, hasActiveMicStream) ->
+  h D.Notice, {}, (setMicStream, renderCurrentStream, hasActiveMicStream) ->
     h 'div', style: {
       display: 'inline-block'
       position: 'relative'
@@ -155,13 +155,13 @@ InputPanel = ({ inputNode, previewNode }) ->
     (
       (renderCurrentStream (stream, DisplayStatus) ->
         h MicrophoneStreamStatus, stream: stream, contents: (streamIsActive) ->
-          streamIsActive and h DisplayStatus, on: true, contents: ->
+          streamIsActive and h DisplayStatus, on: true, ->
             h 'button', onClick: (-> stream.getTracks()[0].stop()), 'Stop Listening'
       ) or h MicrophoneRequestButton, onInputStream: ((stream) -> setMicStream stream; hookupMicStream stream, inputNode)
     ),
     (
-      h D.Notice, contents: (setFileInfo, renderCurrentFileInfo) ->
-        h D.Submittable, action: ((file) -> decodeBuffer(inputNode.context, file).then (data) -> { data: data, file: file }), onSuccess: setFileInfo, contents: (error, isPending, decodeFile) ->
+      h D.Notice, {}, (setFileInfo, renderCurrentFileInfo) ->
+        h D.Submittable, action: ((file) -> decodeBuffer(inputNode.context, file).then (data) -> { data: data, file: file }), onSuccess: setFileInfo, (error, isPending, decodeFile) ->
           h FileDropTarget, onDrop: ((file) -> decodeFile file), contents: (dropActive) -> h 'span', style: {
             display: 'inline-block'
             verticalAlign: 'middle'
