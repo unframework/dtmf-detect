@@ -6,6 +6,7 @@ FrequencyRMS = require('./FrequencyRMS.coffee')
 FilterThresholdDetector = require('./FilterThresholdDetector.coffee')
 BankSelector = require('./BankSelector.coffee')
 Coder = require('./Coder.coffee')
+Collector = require('./Collector.coffee')
 InputPanel = require('./InputPanel.coffee')
 BasicScreen = require('./BasicScreen.coffee')
 BankScreen = require('./BankScreen.coffee')
@@ -80,29 +81,6 @@ removeSoloNode = (soloNode) ->
   if soloNodeStack.length is 0
     previewNode.gain.value = 1
 
-class SoloNodeContext extends React.PureComponent
-  constructor: () ->
-    super()
-
-  componentWillMount: ->
-    if @props.input
-      addSoloNode @props.input
-
-  componentWillReceiveProps: (nextProps) ->
-    if @props.input isnt nextProps.input
-      if @props.input
-        removeSoloNode @props.input
-
-      if nextProps.input
-        addSoloNode nextProps.input
-
-  componentWillUnmount: ->
-    if @props.input
-      removeSoloNode @props.input
-
-  render: ->
-    @props.contents !!@props.input
-
 document.addEventListener 'DOMContentLoaded', ->
   document.body.style.textAlign = 'center';
 
@@ -128,14 +106,19 @@ document.addEventListener 'DOMContentLoaded', ->
               (h 'a', href: '#/grid', style: { display: 'inline-block', margin: '0 5px', fontWeight: if gridNavState then 'bold' else null }, 'Grid')
           ),
           if banksNavState
-            h BankScreen,
-              bankList: bankList
-              keyCodeListSet: keyCodeListSet
-              inputNode: inputNode
-              previewNode: previewNode
-              SoloNodeContext: SoloNodeContext
-              widthPx: 768
-              heightPx: 400
+            h Collector,
+              property: 'input',
+              onAdd: addSoloNode,
+              onRemove: removeSoloNode,
+              contents: (SoloNodeContext) ->
+                h BankScreen,
+                  bankList: bankList
+                  keyCodeListSet: keyCodeListSet
+                  inputNode: inputNode
+                  previewNode: previewNode
+                  SoloNodeContext: SoloNodeContext
+                  widthPx: 768
+                  heightPx: 400
           else if gridNavState
             h GridScreen,
               loBank: bankList[0]
